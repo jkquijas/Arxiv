@@ -183,7 +183,7 @@ class LIPGreedy(LIP):
 		if debug:
 			costs.sort()
 			print 'Min cost = ', costs[0]
-			print 'Max cost = ', costs[len(costs)-1]
+			print 'Max cost = ', costs[len(costs) - 1]
 			
 	def computeCost(self, indexes):
 		if(self.dist_metric == 'cosine'):

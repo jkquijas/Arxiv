@@ -1,7 +1,7 @@
 import numpy as np
 
 from scipy.spatial.distance import euclidean
-from scipy.spatial.distance import pdist
+from scipy.spatial.distance import cdist
 
 import operator
 import itertools
@@ -24,10 +24,14 @@ class LIP(object):
         if(self.dist_metric == 'cosine'):
             S = [zip(np.sum(np.dot(np.array(sentence), np.array(sentence).transpose()), axis=0), sentence) for sentence in message]
         else:
-		    S = [zip(np.sum(pdist(np.array(sentence), 'euclidean'), axis=0), sentence) for sentence in message]
+            S = [zip(np.sum(cdist(np.array(sentence), np.array(sentence), 'euclidean'), axis=0), sentence) for sentence in message]
 
         #Sort sentences by similarity
-        self.S = [sorted(s, key=operator.itemgetter(0)) for s in S]
+        if(self.dist_metric == 'cosine'):
+            self.S = [sorted(s, key=operator.itemgetter(0)) for s in S].reverse()
+        else:
+			self.S = [sorted(s, key=operator.itemgetter(0)) for s in S]
+			
         self.n_sen = len(self.S)
 
         #Initialize search index to 0 (Minimum within sentence cosine similarity)
@@ -38,12 +42,14 @@ class LIP(object):
        
     
         #Compute gamma boundaries
-        if(self.dist_metric == 'cosine'):
+        self.gamma_min = sum(s[0][0] for s in self.S)
+        self.gamma_max = sum(s[len(s)-1][0] for s in self.S)
+        """if(self.dist_metric == 'cosine'):
             self.gamma_min = sum(s[0][0] for s in self.S)
             self.gamma_max = sum(s[len(s)-1][0] for s in self.S)
         else:
-            self.gamma_max = sum(s[0][0] for s in self.S)
-            self.gamma_min = sum(s[len(s)-1][0] for s in self.S)
+            self.gamma_min = sum(s[0][0] for s in self.S)
+            self.gamma_max = sum(s[len(s)-1][0] for s in self.S)"""
     
     
     def computeBoundary(self, debug=True):
@@ -183,7 +189,7 @@ class LIPGreedy(LIP):
 		if(self.dist_metric == 'cosine'):
 			gamma = sum([self.S[i][indexes[i]][0] for i in range(self.n_sen)])
 		else:
-			gamma = sum([self.S[i][indexes[i]][0] for i in range(self.n_sen)])*-1
+			gamma = sum([self.S[i][indexes[i]][0] for i in range(self.n_sen)])
 		#For each sentence
 		delta = 0.0
 		for i in range(self.n_sen):

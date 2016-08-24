@@ -1,0 +1,74 @@
+<summary>  Using Weitzenbock Induced Matter Theory (WIMT), we study Schwarzschild
+wormholes performing different foliations on an extended (non-vaccuum) 5D
+manifold. We explore the geodesic equations for observers which are in the
+interior of a traversable wormhole and how these observers can detect
+gravito-magnetic monopoles which are dual to gravito-electric sources observed
+in the outer zone of some Schwarzschild Black-Hole (BH). The densities of these
+monopoles are calculated and quantized in the Dirac sense. This kind of duality
+on the extended Einstein-Maxwell equations, relates electric and magnetic
+charges on causally disconnected space regions.
+</summary><summary>  The aim of this paper is to study the plasma flows on the Mercury surface for
+different interplanetary magnetic field orientations on the day side of the
+planet. We use a single fluid MHD model in spherical coordinates to simulate
+the interaction of the solar wind with the Hermean magnetosphere for six solar
+wind realistic configurations with different magnetic field orientations:
+Mercury-Sun, Sun-Mercury, aligned with the magnetic axis of Mercury (Northward
+and Southward) and with the orbital plane perpendicular to the previous cases.
+In the Mercury-Sun (Sun-Mercury) simulation the Hermean magnetic field is
+weakened in the South-East (North-East) of the magnetosphere leading to an
+enhancement of the flows on the South (North) hemisphere. For a Northward
+(Southward) orientation there is an enhancement (weakening) of the Hermean
+magnetic field in the nose of the bow shock so the fluxes are reduced and
+drifted to the poles (enhanced and drifted to the equator). If the solar wind
+magnetic field is in the orbital plane the magnetosphere is tilted to the West
+(East) and weakened at the nose of the shock, so the flows are enhanced and
+drifted to the East (West) in the Northern hemisphere and to the West (East) in
+the Southern hemisphere.
+</summary><summary>  The sudden short duration decrease in cosmic ray flux is known as Forbush
+decrease which is mainly caused by interplanetary disturbances. Generally
+accepted view is that the first step of Forbush decrease is due to shock sheath
+and second step is due to Magnetic Cloud (MC) of Interplanetary Coronal Mass
+Ejection (ICME). However, there are few questions which needs detail
+investigation. (i) Does the complete (or part of) ICME shock or MC contribute
+in cosmic ray decrease? (ii) Is there any internal structure associated with
+the ICMEs shock/MC which precisely contribute in decrease? To address these
+questions we have studied a total of 18 large ($&gt;=8 \%$) Forbush decrease
+events and associated ICMEs. Majority of events shows multi-steps Forbush
+decrease profile. This leads into re-classification of Forbush decrease events
+depending upon the number of steps observed in their respective profile. The
+present study clearly indicates that not only broad regions (shock-sheath and
+MC) contribute to Forbush decrease but also localized structures within
+shock-sheath and MC have very much significant importance in Forbush decrease
+profile.
+</summary><summary>  We study 50 cosmic ray Forbush decreases (FDs) from the Oulu neutron monitor
+data during 1997-2005 that were associated with Earth-directed interplanetary
+coronal mass ejections (ICMEs). Such events are generally thought to arise due
+to the shielding of cosmic rays by a propagating diffusive barrier. The main
+processes at work are the diffusion of cosmic rays across the large-scale
+magnetic fields carried by the ICME and their advection by the solar wind. In
+an attempt to better understand the relative importance of these effects, we
+analyse the relationship between the FD profiles and those of the
+interplanetary magnetic field (B) and the solar wind speed (Vsw). Over the
+entire duration of a given FD, we find that the FD profile is generally well
+(anti)correlated with the B and Vsw profiles. This trend holds separately for
+the FD main and recovery phases too. For the recovery phases, however, the FD
+profile is highly anti-correlated with the Vsw profile, but not with the B
+profile. While the total duration of the FD profile is similar to that of the
+Vsw profile, it is significantly longer than that of the B profile.
+</summary><summary>  The aim of this study is to simulate the interaction of the solar wind with
+the Hermean magnetosphere when the interplanetary magnetic field is weak,
+performing a parametric study for all the range of hydrodynamic values of the
+solar wind predicted on Mercury for the ENLIL + GONG WSA + Cone SWRC model:
+density from $12$ to $180$ cm$^{-3}$, velocity from $200$ to $500$ km/s and
+temperatures from $2 \cdot 10^4$ to $18 \cdot 10^4$ K, and compare the results
+with a real MESSENGER orbit as reference case. We use the code PLUTO in
+spherical coordinates and an asymmetric multipolar expansion for the Hermean
+magnetic field. The study shows for all simulations a stand off distance larger
+than the Mercury radius and the presence of close magnetic field lines on the
+day side of the planet, so the dynamic pressure of the solar wind is not high
+enough to push the magnetopause on the planet surface if the interplanetary
+magnetic field is weak. The simulations with large dynamic pressure lead to a
+large compression of the Hermean magnetic field modifying its topology in the
+inner magnetosphere as well as the plasma flows from the magnetosheath towards
+the planet surface.
+</summary>

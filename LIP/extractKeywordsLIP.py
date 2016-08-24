@@ -5,8 +5,8 @@ from nltk.corpus import stopwords
 from LinearInformationPropagation import LIP
 from LinearInformationPropagation import LIPGreedy
 from EmbeddingModule import EmbeddingsReader
-from ArxivDataModule import ArxivManager
-
+from ArxivDataModule import ArxivReader
+import pprint
 
 lambda_ = .3
 
@@ -42,8 +42,13 @@ stop_words.update(common_words_list[0:num_common_words])
 stop_words = [unicode(word) for word in stop_words]
 
 
-arxivManager = ArxivManager()
-for c in arxivManager.categories():
+arxivReader = ArxivReader()
+text_data = arxivReader.readFileSplitByParagraphs("/home/jonathan/Documents/WordEmbedding/Arxiv/Data/Text/testDocument.txt")
+for i in range(len(text_data)):
+	print 'Paragraph ', i, '\n'
+	print text_data[i]
+
+"""for c in arxivManager.categories():
 	text_data = arxivManager.read(c)
 	for i, message in enumerate(text_data):
 		print 'Message ', i+1
@@ -56,5 +61,5 @@ for c in arxivManager.categories():
 		lip = LIPGreedy(message, embObj.embeddingSize(), lambda_, 'euclidean')
 		lip.computeBoundary()
 		lip.selectKeywords()
-		lip.printResults(values_array, keys_array)
+		lip.printResults(values_array, keys_array)"""
 

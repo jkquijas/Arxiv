@@ -1,0 +1,18 @@
+In the model that has become known as "Perfectly Secure Message
+Transmission"(PSMT), a sender Alice is connected to a receiver Bob through n
+parallel two-way channels. A computationally unbounded adversary Eve controls t
+of these channels, meaning she can acquire and alter any data that is
+transmitted over these channels. The sender Alice wishes to communicate a
+secret message to Bob privately and reliably, i.e. in such a way that Eve will
+not get any information about the message while Bob will be able to recover it
+completely.
+  In this paper, we focus on protocols that work in two transmission rounds for
+n= 2t+1. We break from previous work by following a conceptually simpler
+blueprint for achieving a PSMT protocol. We reduce the previously best-known
+communication complexity, i.e. the number of transmitted bits necessary to
+communicate a 1-bit secret, from O(n^3 log n) to O(n^2 log n). Our protocol
+also answers a question raised by Kurosawa and Suzuki and hitherto left open:
+their protocol reaches optimal transmission rate for a secret of size O(n^2 log
+n) bits, and the authors raised the problem of lowering this threshold. The
+present solution does this for a secret of O(n log n) bits. Additionally, we
+show how our protocol can be adapted to a Network Coding context.

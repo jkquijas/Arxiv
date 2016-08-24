@@ -1,0 +1,74 @@
+	In order to limit the damage of malware on Mac OS X and iOS, Apple uses
+sandboxing, a kernel-level security layer that provides tight constraints for
+system calls. Particularly used for Apple iOS, sandboxing prevents apps from
+executing potentially dangerous actions, by defining rules in a sandbox
+profile. Investigating Apple's built-in sandbox profiles is difficult as they
+are compiled and stored in binary format. We present SandBlaster, a software
+bundle that is able to reverse/decompile Apple binary sandbox profiles to their
+original human readable SBPL (SandBox Profile Language) format. We use
+SandBlaster to reverse all built-in Apple iOS binary sandbox profiles for iOS
+7, 8 and 9. Our tool is, to the best of our knowledge, the first to provide a
+full reversing of the Apple sandbox, shedding light into the inner workings of
+Apple sandbox profiles and providing essential support for security researchers
+and professionals interested in Apple security mechanisms.
+
+	We have developed a task-parallel runtime system, called TREES, that is
+designed for high performance on CPU/GPU platforms. On platforms with multiple
+CPUs, Cilk's "work-first" principle underlies how task-parallel applications
+can achieve performance, but work-first is a poor fit for GPUs. We build upon
+work-first to create the "work-together" principle that addresses the specific
+strengths and weaknesses of GPUs. The work-together principle extends
+work-first by stating that (a) the overhead on the critical path should be paid
+by the entire system at once and (b) work overheads should be paid
+co-operatively. We have implemented the TREES runtime in OpenCL, and we
+experimentally evaluate TREES applications on a CPU/GPU platform.
+
+	Fault tolerance for the upcoming exascale generation has long been an area of
+active research. One of the components of a fault tolerance strategy is
+checkpointing. Petascale-level checkpointing is demonstrated through a new
+mechanism for virtualization of the InfiniBand UD (unreliable datagram) mode,
+and for updating the remote address on each UD-based send, due to lack of a
+fixed peer. Note that InfiniBand UD is required to support modern MPI
+implementations. An extrapolation from the current results to future SSD-based
+storage systems provides evidence that the current approach will remain
+practical in the exascale generation. This transparent checkpointing approach
+is evaluated using a framework of the DMTCP checkpointing package. Results are
+shown for HPCG (linear algebra), NAMD (molecular dynamics), and the NAS NPB
+benchmarks. In tests up to 24,000 MPI processes on 24,000 CPU cores,
+checkpointing of a computation with a 29 TB memory footprint in 10 minutes is
+demonstrated. Runtime overhead is reduced to less than 1%. The approach is also
+evaluated across three widely used MPI implementations.
+
+	We propose three novel mathematical optimization formulations that solve the
+same two-type heterogeneous multiprocessor scheduling problem for a real-time
+taskset with hard constraints. Our formulations are based on a global
+scheduling scheme and a fluid model. The first formulation is a mixed-integer
+nonlinear program, since the scheduling problem is intuitively considered as an
+assignment problem. However, by changing the scheduling problem to first
+determine a task workload partition and then to find the execution order of all
+tasks, the computation time can be significantly reduced. Specifically, the
+workload partitioning problem can be formulated as a continuous nonlinear
+program for a system with continuous operating frequency, and as a continuous
+linear program for a practical system with a discrete speed level set. The task
+ordering problem can be solved by an algorithm with a complexity that is linear
+in the total number of tasks. The work is evaluated against existing global
+energy/feasibility optimal workload allocation formulations. The results
+illustrate that our algorithms are both feasibility optimal and energy optimal
+for both implicit and constrained deadline tasksets. Specifically, our
+algorithm can achieve up to 40% energy saving for some simulated tasksets with
+constrained deadlines. The benefit of our formulation compared with existing
+work is that our algorithms can solve a more general class of scheduling
+problems due to incorporating a scheduling dynamic model in the formulations
+and allowing for a time-varying speed profile. Moreover, our algorithms can be
+applied to both online and offline scheduling schemes.
+
+	Malicious peripherals designed to attack their host computers are a growing
+problem. Inexpensive and powerful peripherals that attach to plug-and-play
+buses have made such attacks easy to mount. Making matters worse, commodity
+operating systems lack coherent defenses, and users are often unaware of the
+scope of the problem. We present Cinch, a pragmatic response to this threat.
+Cinch uses virtualization to attach peripheral devices to a logically separate,
+untrusted machine, and includes an interposition layer between the untrusted
+machine and the protected one. This layer regulates interaction with devices
+according to user-configured policies. Cinch integrates with existing OSes,
+enforces policies that thwart real-world attacks, and has low overhead.

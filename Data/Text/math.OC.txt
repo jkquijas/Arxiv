@@ -1,0 +1,49 @@
+<summary>  It was proved by Almgren that among boundaries whose mean curvature is
+bounded from above, perimeter is uniquely minimized by balls. We obtain sharp
+stability estimates for Almgren's isoperimetric principle and, as an
+application, we deduce a sharp description of boundaries with almost constant
+mean curvature under a total perimeter bound which prevents bubbling.
+</summary><summary>  For central banks, managing the minting is one of the most important task
+since a shortage yields negative economic and social impacts, and the budget
+committed for minting is one of the largest within the central banks. Hence,
+the central bank requires to find the mixture of coins to be produced that
+satisfies the demand, inventory and production constraints while minimizing the
+cost. We propose a mixed-integer programming model that minimize the cost of
+minting by reducing the number of extra-shifts required while fulfilling the
+constraints. We also perform a simulation with data of a central bank which
+shows that the model reduces in 24\% the cost of extra-shifts used during 21
+quarters, compared with the spreadsheet based approach used currently at the
+operation.
+</summary><summary>  Earlier work has established a decentralized optimal control framework for
+coordinating online a continuous flow of connected automated vehicles (CAVs)
+entering a control zone and crossing two adjacent intersections in an urban
+area. A solution, when it exists, allows the vehicles to cross the
+intersections without the use of traffic lights, without creating congestion on
+the connecting road, and under the hard safety constraint of collision
+avoidance. We establish the conditions under which such solutions exist and
+show that they can be enforced through an appropriately designed feasibility
+enforcement zone that precedes the control zone. The proposed solution and
+overall control architecture are illustrated through simulation.
+</summary><summary>  In this technical note, we study the controllability of diffusively coupled
+networks from a graph theoretic perspective. We consider leader-follower
+networks, where the external control inputs are injected to only some of the
+agents, namely the leaders. Our main result relates the controllability of such
+systems to the graph distances between the agents. More specifically, we
+present a graph topological lower bound on the rank of the controllability
+matrix. This lower bound is tight, and it is applicable to systems with
+arbitrary network topologies, coupling weights, and number of leaders. An
+algorithm for computing the lower bound is also provided. Furthermore, as a
+prominent application, we present how the proposed bound can be utilized to
+select a minimal set of leaders for achieving controllability, even when the
+coupling weights are unknown.
+</summary><summary>  We propose a method of bi-coordinate variations for non-stationary and
+non-smooth optimization problems, which involve a single linear equality and
+box constraints. Here only approximation sequences are known instead of exact
+values of the cost function and parameters of the feasible set. It consists in
+making descent steps with respect to only two selected coordinates satisfying
+some special threshold rule. The method is simpler essentially than the usual
+gradient or dual type ones and differs from the previous known bi-coordinate
+ones suggested for the usual stationary and smooth problems. We establish its
+convergence under rather mild assumptions. Computational tests also reveal
+certain preferences of the proposed method over the known ones.
+</summary>

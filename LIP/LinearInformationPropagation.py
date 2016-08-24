@@ -3,6 +3,7 @@ import numpy as np
 from scipy.spatial.distance import euclidean
 from scipy.spatial.distance import cdist
 
+#comment
 import operator
 import itertools
 
@@ -31,16 +32,16 @@ class LIP(object):
             self.S = [sorted(s, key=operator.itemgetter(0)) for s in S].reverse()
         else:
 			self.S = [sorted(s, key=operator.itemgetter(0)) for s in S]
-			
+
         self.n_sen = len(self.S)
 
         #Initialize search index to 0 (Minimum within sentence cosine similarity)
         self.search_idx_vec = [0 for s in message]
         #Compute length of sentences
         self.sen_len_vec = [float(len(s)) for s in message]
-    
-       
-    
+
+
+
         #Compute gamma boundaries
         self.gamma_min = sum(s[0][0] for s in self.S)
         self.gamma_max = sum(s[len(s)-1][0] for s in self.S)
@@ -50,8 +51,8 @@ class LIP(object):
         else:
             self.gamma_min = sum(s[0][0] for s in self.S)
             self.gamma_max = sum(s[len(s)-1][0] for s in self.S)"""
-    
-    
+
+
     def computeBoundary(self, debug=True):
         #Compute budget!
         budget = self.gamma_min + self.lambda_*(self.gamma_max-self.gamma_min)
@@ -59,7 +60,7 @@ class LIP(object):
             print 'Budget = ', budget
 
         gain = (budget)/self.gamma_min
-        gamma_hat = self.gamma_min  
+        gamma_hat = self.gamma_min
 
         iter_count = 1.0
         R = np.zeros((self.n_sen, self.embedding_size))
@@ -69,7 +70,7 @@ class LIP(object):
         delta_0 = np.sum(np.sum(np.dot(R, R.transpose())))
         """print 'delta_0 = ', delta_0"""
 
-        
+
         #Compute search boundaries defined by gamma_hat
         while (gamma_hat <= budget and iter_count < self.long_sent_len):
             search_prcnt = iter_count/self.long_sent_len
@@ -92,7 +93,7 @@ class LIP(object):
                 break
 
             iter_count = iter_count + 1.0
-    
+
         if debug:
             print 'gamma_hat = ', gamma_hat
             print 'search indexes = ', zip(self.search_idx_vec, self.sen_len_vec)
@@ -103,7 +104,7 @@ class LIP(object):
         sim = 0.0
         chosen_idxs = [0 for k in range(self.n_sen)]
         delta = 0.0
-		
+
         for ii in range(0, self.search_idx_vec[0]+1):
             for jj in range(0, self.search_idx_vec[1]+1):
                 sim = np.dot(self.S[0][ii][1], self.S[1][jj][1])
@@ -116,7 +117,7 @@ class LIP(object):
         for k in range(2, self.n_sen):
             delta = 0.0
             #For kth sentence search range
-            for ii in range(0, self.search_idx_vec[k]+1):      
+            for ii in range(0, self.search_idx_vec[k]+1):
                 sim = np.dot(self.S[k-1][self.search_idx_vec[k-1]][1], self.S[k][ii][1])
                 if(sim > delta):
                     delta = sim
@@ -150,24 +151,24 @@ class LIPGreedy(LIP):
 	def __init__(self, message, embedding_size, lambda_ = 0.2, dist_metric = 'cosine'):
 		super(self.__class__, self).__init__(message, embedding_size, lambda_, dist_metric)
 
-	
+
 	def computeBoundary(self, debug = True):
 		for k, s in enumerate(self.S):
 			budget = s[0][0] + self.lambda_*(s[len(s)-1][0]-s[0][0])
 			while(s[self.search_idx_vec[k]][0] < budget):
 				self.search_idx_vec[k] = self.search_idx_vec[k] + 1
-				
+
 		if debug:
 			print 'search indexes = ', zip(self.search_idx_vec, self.sen_len_vec)
 			print 'Reduced search space to ', 100.0*(float(sum(np.array(self.search_idx_vec)+1.0))/float(sum(self.sen_len_vec))), ' % of original space'
-			
+
 		#Create indexing dictionary
 		self.dots = {}
 		for i in range(self.n_sen):
 			for j in range(self.search_idx_vec[i]+1):
 				self.dots[str(i)+str(j)] = {}
-	
-	
+
+
 	def selectKeywords(self, debug=True):
 		#Produce list of index permutations
 		permutations = [k for k in range(self.search_idx_vec[0]+1)]
@@ -184,7 +185,7 @@ class LIPGreedy(LIP):
 			costs.sort()
 			print 'Min cost = ', costs[0]
 			print 'Max cost = ', costs[len(costs) - 1]
-			
+
 	def computeCost(self, indexes):
 		if(self.dist_metric == 'cosine'):
 			gamma = sum([self.S[i][indexes[i]][0] for i in range(self.n_sen)])
@@ -193,28 +194,27 @@ class LIPGreedy(LIP):
 		#For each sentence
 		delta = 0.0
 		for i in range(self.n_sen):
-			#Add all dot products
+            #Add all dot products
 			delta += sum([self.computeDot(i, indexes[i], j, indexes[j]) for j, idx in enumerate(indexes)])
-		#delta = delta * sum([(self.search_idx_vec[k] + 1) for k in range(self.n_sen)])
-		
-		"""print 'Gamma = ', gamma
-		print 'Delta = ', delta"""
-		return gamma-(delta)
-		
-		
+		if(self.dist_metric == 'cosine'):
+			return gamma-(delta)
+		else:
+			return (-1*gamma)+delta
+
+
 	def computeDot(self, s_i, i, s_j, j):
 		if((str(s_j)+str(j)) in self.dots[str(s_i)+str(i)]):
 			return self.dots[str(s_i)+str(i)][(str(s_j)+str(j))]
-		
+
 		if((str(s_i)+str(i)) in self.dots[str(s_j)+str(j)]):
 			dot = self.dots[str(s_j)+str(j)][(str(s_i)+str(i))]
-			self.dots[str(s_i)+str(i)][(str(s_j)+str(j))] = dot	
+			self.dots[str(s_i)+str(i)][(str(s_j)+str(j))] = dot
 			return dot
 		if(self.dist_metric == 'cosine'):
 			dot = np.dot(self.S[s_i][i][1], self.S[s_j][j][1])
 		else:
-			dot = euclidean(self.S[s_i][i][1], self.S[s_j][j][1])*(-1)
-			
+			dot = euclidean(self.S[s_i][i][1], self.S[s_j][j][1])
+
 		self.dots[str(s_i)+str(i)][(str(s_j)+str(j))] = dot
 		return dot
 
@@ -222,6 +222,3 @@ def flat_tuple(a):
 		if type(a) not in (tuple, list): return (a,)
 		if len(a) == 0: return tuple(a)
 		return flat_tuple(a[0]) + flat_tuple(a[1:])
-	
-	
-	

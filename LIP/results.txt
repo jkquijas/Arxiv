@@ -1,0 +1,170 @@
+lambda = .3
+
+budget = gamma_min + lambda*(gamma_max - gamma_min), 
+where "gamma_" is a sum of within-sentence cosine similarities
+~~~~~~~~~~~~~~~~~~~Machine Learning
+In this paper, the online variants of the classical Frank-Wolfe algorithm are considered. We consider minimizing the regret with a stochastic cost. The
+online algorithms only require simple iterative updates and a non-adaptive step size rule, in contrast to the hybrid schemes commonly considered in the
+literature. Several new results are derived for convex and non-convex losses. With a strongly convex stochastic cost and when the optimal solution lies in
+the interior of the constraint set or the constraint set is a polytope, the regret bound and anytime optimality are shown to be ${\cal O}( \log^3 T / T )$
+and ${\cal O}( \log^2 T / T)$, respectively, where $T$ is the number of rounds played. These results are based on an improved analysis on the stochastic
+Frank-Wolfe algorithms. Moreover, the online algorithms are shown to converge even when the loss is non-convex, i.e., the algorithms find a stationary point
+to the time-varying/stochastic loss at a rate of ${\cal O}(\sqrt{1/T})$. Numerical experiments on realistic data sets are presented to support our
+theoretical claims.
+s 1 :  stochastic
+s 2 :  non-adaptive
+s 3 :  non-convex
+s 4 :  optimality
+s 5 :  stochastic
+s 6 :  non-convex
+s 7 :  numerical
+
+Determinantal point processes (DPPs) are an elegant model for encoding probabilities over subsets, such as shopping baskets, of a ground set, such as
+an item catalog. They are useful for a number of machine learning tasks, including product recommendation. DPPs are parametrized by a positive
+semi-definite kernel matrix. Recent work has shown that using a low-rank factorization of this kernel provides remarkable scalability improvements that
+open the door to training on large-scale datasets and computing online recommendations, both of which are infeasible with standard DPP models that use
+a full-rank kernel. In this paper we present a low-rank DPP mixture model that allows us to represent the latent structure present in observed subsets as a
+mixture of a number of component low-rank DPPs, where each component DPP is responsible for representing a portion of the observed data. The mixture model
+allows us to effectively address the capacity constraints of the low-rank DPP model. We present an efficient and scalable Markov Chain Monte Carlo (MCMC)
+learning algorithm for our model that uses Gibbs sampling and stochastic gradient Hamiltonian Monte Carlo (SGHMC). Using an evaluation on several
+real-world product recommendation datasets, we show that our low-rank DPP mixture model provides substantially better predictive performance than is
+possible with a single low-rank or full-rank DPP, and significantly better performance than several other competing recommendation methods in many cases.
+s 0 :  probabilities
+s 1 :  recommendation
+s 2 :  parametrized
+s 3 :  low-rank
+s 4 :  low-rank
+s 5 :  low-rank
+s 6 :  mcmc
+s 7 :  low-rank
+
+
+
+~~~~~~~~~~~~~~~~~~Operating Systems
+In order to limit the damage of malware on Mac OS X and iOS, Apple uses sandboxing, a kernel-level security layer that provides tight constraints for
+system calls. Particularly used for Apple iOS, sandboxing prevents apps from executing potentially dangerous actions, by defining rules in a sandbox
+profile. Investigating Apple's built-in sandbox profiles is difficult as they are compiled and stored in binary format. We present SandBlaster, a software
+bundle that is able to reverse/decompile Apple binary sandbox profiles to their original human readable SBPL (SandBox Profile Language) format. We use
+SandBlaster to reverse all built-in Apple iOS binary sandbox profiles for iOS 7, 8 and 9. Our tool is, to the best of our knowledge, the first to provide a
+full reversing of the Apple sandbox, shedding light into the inner workings of Apple sandbox profiles and providing essential support for security researchers
+and professionals interested in Apple security mechanisms.
+Cosine
+s 0 :  malware
+s 1 :  sandbox
+s 2 :  sandbox
+s 3 :  sandbox
+s 4 :  sandbox
+s 5 :  sandbox
+
+Euclidean
+s 0 :  tight
+s 1 :  apps
+s 2 :  investigating
+s 3 :  readable
+s 4 :  sandbox
+s 5 :  reversing
+
+We have developed a task-parallel runtime system, called TREES, that is designed for high performance on CPU/GPU platforms. On platforms with multiple
+CPUs, Cilk's "work-first" principle underlies how task-parallel applications can achieve performance, but work-first is a poor fit for GPUs. We build upon
+work-first to create the "work-together" principle that addresses the specific strengths and weaknesses of GPUs. The work-together principle extends
+work-first by stating that (a) the overhead on the critical path should be paid by the entire system at once and (b) work overheads should be paid
+co-operatively. We have implemented the TREES runtime in OpenCL, and we experimentally evaluate TREES applications on a CPU/GPU platform.
+Cosine
+s 0 :  gpu
+s 1 :  cilk
+s 2 :  gpus
+s 3 :  co-operatively
+s 4 :  opencl
+
+Euclidean
+s 0 :  trees
+s 1 :  cilk
+s 2 :  gpus
+s 3 :  co-operatively
+s 4 :  experimentally
+
+
+Malicious peripherals designed to attack their host computers are a growing problem. Inexpensive and powerful peripherals that attach to plug-and-play
+buses have made such attacks easy to mount. Making matters worse, commodity operating systems lack coherent defenses, and users are often unaware of the
+scope of the problem. We present Cinch, a pragmatic response to this threat. Cinch uses virtualization to attach peripheral devices to a logically separate,
+untrusted machine, and includes an interposition layer between the untrusted machine and the protected one. This layer regulates interaction with devices
+according to user-configured policies. Cinch integrates with existing OSes, enforces policies that thwart real-world attacks, and has low overhead.
+Cosine
+s 0 :  peripherals
+s 1 :  plug-and-play
+s 2 :  coherent
+s 3 :  cinch
+s 4 :  cinch
+s 5 :  layer
+s 6 :  cinch
+
+Euclidean
+s 0 :  host
+s 1 :  mount
+s 2 :  commodity
+s 3 :  cinch
+s 4 :  interposition
+s 5 :  layer
+s 6 :  oses
+
+~~~~~~~~~~~~~~~~Space Physics
+Using Weitzenb ̈ock Induced Matter Theory (WIMT), we study Schwarzschild wormholes performing different foliations on an extended (non-vaccuum) 5D
+manifold. We explore the geodesic equations for observers which are in the interior of a traversable wormhole and how these observers
+can detect gravito-magnetic monopoles which are dual to gravito-electric sources observed in the outer zone of some Schwarzschild Black-Hole (BH).
+The densities of these monopoles are calculated and quantized in the Dirac sense. This kind of duality on the extended Einstein-Maxwell equations,
+relates electric and magnetic charges on causally disconnected space regions
+Cosine
+s 0 :  5d
+s 1 :  bh
+s 2 :  monopoles
+s 3 :  causally
+
+Euclidean
+s 0 :  schwarzschild
+s 1 :  bh
+s 2 :  sense
+s 3 :  causally
+
+
+~~~~~~~~~~~~~~Optimality and Control
+For central banks, managing the minting is one of the most important task since a shortage yields negative economic and social impacts, and the budget
+committed for minting is one of the largest within the central banks. Hence, the central bank requires to find the mixture of coins to be produced that
+satisfies the demand, inventory and production constraints while minimizing the cost. We propose a mixed-integer programming model that minimize the cost of
+minting by reducing the number of extra-shifts required while fulfilling the constraints. We also perform a simulation with data of a central bank which
+shows that the model reduces in 24\% the cost of extra-shifts used during 21 quarters, compared with the spreadsheet based approach used currently at the
+operation.
+Cosine
+s 0 :  minting
+s 1 :  coins
+s 2 :  minting
+s 3 :  spreadsheet
+
+Euclidean
+s 0 :  minting
+s 1 :  satisfies
+s 2 :  programming
+s 3 :  spreadsheet
+
+Earlier work has established a decentralized optimal control framework for coordinating online a continuous flow of connected automated vehicles (CAVs)
+entering a control zone and crossing two adjacent intersections in an urban area. A solution, when it exists, allows the vehicles to cross the
+intersections without the use of traffic lights, without creating congestion on the connecting road, and under the hard safety constraint of collision
+avoidance. We establish the conditions under which such solutions exist and show that they can be enforced through an appropriately designed feasibility
+enforcement zone that precedes the control zone. The proposed solution and overall control architecture are illustrated through simulation.
+
+Cosine
+s 0 :  cavs
+s 1 :  constraint
+s 2 :  precedes
+s 3 :  overall
+
+Euclidean
+s 0 :  cavs
+s 1 :  intersections
+s 2 :  precedes
+s 3 :  illustrated
+
+
+
+Pending Improvements:
+-Better parsing(removing Latex, characters between brackets, etc)
+-Avoid selection of same term multiple times (e.g. more than two times)

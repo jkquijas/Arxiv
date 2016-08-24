@@ -79,6 +79,13 @@ class ArxivReader(ArxivObj):
 		text_data = [[TreebankWordTokenizer().tokenize(re.sub("[^a-zA-Z0-9\-]", " ", sentence).lower()) for sentence in message] for message in text_data]
 		return text_data
 	
+	def readFileSplitByParagraphs(self, filePath):
+		raw_data = open(filePath, 'r').read()
+		text_data = re.split('\n\n\t',raw_data)
+		text_data = [nltk.sent_tokenize(str(message)) for message in text_data]
+		text_data = [[TreebankWordTokenizer().tokenize(re.sub("[^a-zA-Z0-9\-]", " ", sentence).lower()) for sentence in message] for message in text_data]
+		return text_data
+	
 class ArxivWriter(ArxivObj):
 	data_path = '/home/jonathan/Documents/WordEmbedding/Arxiv/Data/Keywords/'
 

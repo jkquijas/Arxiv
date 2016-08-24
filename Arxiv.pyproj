@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{af1fc88b-1d91-4ccb-a1cc-990b4b395c1e}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile />
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId />
+    <InterpreterVersion />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+    <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Data\500common.txt" />
+    <Content Include="Data\categories.txt" />
+    <Content Include="Data\Keywords\ cs.CR.txt" />
+    <Content Include="Data\Keywords\ cs.OS.txt" />
+    <Content Include="Data\Keywords\ math.PR.txt" />
+    <Content Include="Data\Keywords\ physics.med-ph.txt" />
+    <Content Include="Data\Keywords\ physics.space-ph.txt" />
+    <Content Include="Data\Keywords\cs.AI.txt" />
+    <Content Include="Data\Keywords\cs.AR.txt" />
+    <Content Include="Data\Keywords\cs.CC.txt" />
+    <Content Include="Data\Keywords\cs.GR.txt" />
+    <Content Include="Data\Keywords\cs.OS.txt" />
+    <Content Include="Data\Keywords\LIP\cs.AI.txt" />
+    <Content Include="Data\Keywords\LIP\cs.AR.txt" />
+    <Content Include="Data\Keywords\LIP\q-bio.GN.txt" />
+    <Content Include="Data\Keywords\LIP\stat.ML.txt" />
+    <Content Include="Data\Keywords\math.OC.txt" />
+    <Content Include="Data\Keywords\math.PR.txt" />
+    <Content Include="Data\Keywords\physics.optics.txt" />
+    <Content Include="Data\Keywords\physics.space-ph.txt" />
+    <Content Include="Data\Keywords\q-bio.GN.txt" />
+    <Content Include="Data\Keywords\stat.ML.txt" />
+    <Content Include="Data\mauiTest.txt" />
+    <Content Include="Data\Text\cs.OS.txt" />
+    <Content Include="Data\Text\math.OC.txt" />
+    <Content Include="Data\Text\physics.space-ph.txt" />
+    <Content Include="Data\Text\testDocument.txt" />
+    <Content Include="TopicExtraction\results.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="LIP\LinearInformationPropagation.py" />
+    <Compile Include="TopicExtraction\ArxivDataModule.py" />
+    <Compile Include="TopicExtraction\arxiv_crawl.py" />
+    <Compile Include="TopicExtraction\EmbeddingModule.py" />
+    <Compile Include="TopicExtraction\extractKeywordsLIP.py" />
+    <Compile Include="TopicExtraction\LinearInformationPropagation.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data" />
+    <Folder Include="Data\Keywords" />
+    <Folder Include="Data\Keywords\LIP" />
+    <Folder Include="Data\Text" />
+    <Folder Include="LIP" />
+    <Folder Include="TopicExtraction" />
+  </ItemGroup>
+  <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="!Exists($(PtvsTargetsFile))" />
+</Project>

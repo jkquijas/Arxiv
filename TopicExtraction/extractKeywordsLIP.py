@@ -2,13 +2,16 @@ import numpy as np
 import time
 from nltk.corpus import stopwords
 
-from LinearInformationPropagation import LIP
+#from LinearInformationPropagation import LIP
 from LinearInformationPropagation import LIPGreedy
 from EmbeddingModule import EmbeddingsReader
 from ArxivDataModule import ArxivReader
+from ArxivDataModule import ArxivManager
 import pprint
 
-lambda_ = .3
+from collections import Counter
+
+lambda_ = .2
 
 #Clock in time
 start = time.time()
@@ -19,7 +22,7 @@ common_words_path = '/home/jonathan/Documents/WordEmbedding/20Newsgroups/Data/20
 
 
 #Get embeddings
-embObj = EmbeddingsReader() 
+embObj = EmbeddingsReader()
 normalize = True
 embeddings = embObj.readEmbeddings(normalize)
 
@@ -30,7 +33,7 @@ keys_array = embObj.keysArray()
 
 #Create stopwords set
 stop_words = set(stopwords.words('english'))
-stop_words.update(['.', ',', '"', "'", '?', '!', ':', ';', '(', ')', '[', ']', '{', '}']) # remove it if you need punctuation 
+stop_words.update(['.', ',', '"', "'", '?', '!', ':', ';', '(', ')', '[', ']', '{', '}']) # remove it if you need punctuation
 common_words_file = open(common_words_path, 'r')
 common_words_list = [word for line in common_words_file for word in line.split()]
 common_words_file.close()
@@ -43,12 +46,35 @@ stop_words = [unicode(word) for word in stop_words]
 
 
 arxivReader = ArxivReader()
-text_data = arxivReader.readFileSplitByParagraphs("/home/jonathan/Documents/WordEmbedding/Arxiv/Data/Text/testDocument.txt")
+text_data = arxivReader.readFileSplitByParagraphs("/home/jonathan/Documents/WordEmbedding/Arxiv/Data/Text/demystifying-deep-reinforcement-learning.txt")
+print len(text_data), ' paragraphs\n'
+results = []
 for i in range(len(text_data)):
 	print 'Paragraph ', i, '\n'
-	print text_data[i]
+	message = text_data[i]
+	#print message
+	#Map all words to their embeddings
+	message = [[embeddings.get(word) for word in sentences if word not in stop_words and embeddings.get(word) is not None] for sentences in message]
+	#Check for empty sentences (after common and stop word removal)
+	message = [sen for sen in message if len(sen) > 0]
 
-"""for c in arxivManager.categories():
+	lip = LIPGreedy(message, embObj.embeddingSize(), lambda_, 'cosine')
+	lip.computeBoundary()
+	lip.selectKeywords()
+	r = lip.getResults(values_array, keys_array)
+	print r
+	results += r
+
+results.sort()
+print results
+cnt = Counter(results)
+print 'Extracted keywords'
+print [k for k, v in cnt.iteritems() if v > 3]
+
+
+
+"""arxivManager = ArxivManager()
+for c in arxivManager.categories():
 	text_data = arxivManager.read(c)
 	for i, message in enumerate(text_data):
 		print 'Message ', i+1
@@ -56,10 +82,9 @@ for i in range(len(text_data)):
 		message = [[embeddings.get(word) for word in sentences if word not in stop_words and embeddings.get(word) is not None] for sentences in message]
 		#Check for empty sentences (after common and stop word removal)
 		message = [sen for sen in message if len(sen) > 0]
-	
+
 		#message = embObj.mapWords(message)
-		lip = LIPGreedy(message, embObj.embeddingSize(), lambda_, 'euclidean')
+		lip = LIPGreedy(message, embObj.embeddingSize(), lambda_)
 		lip.computeBoundary()
 		lip.selectKeywords()
 		lip.printResults(values_array, keys_array)"""
-

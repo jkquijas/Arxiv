@@ -12,7 +12,7 @@ import operator
 
 """Linear Information Propagation Model Class
    Programmed by Jonathan Quijas
-   Last modified 07/29/2016
+   Last modified 08/29/2016
 """
 class LIP(object):
     def __init__(self, message, embedding_size, lambda_ = 0.2, dist_metric = 'cosine'):
@@ -27,11 +27,12 @@ class LIP(object):
         else:
             S = [zip(np.sum(cdist(np.array(sentence), np.array(sentence), 'euclidean'), axis=0), sentence) for sentence in message]
 
+
         #Sort sentences by similarity
         if(self.dist_metric == 'cosine'):
-            self.S = [sorted(s, key=operator.itemgetter(0)) for s in S].reverse()
+            self.S = [sorted(s, key=operator.itemgetter(0)) for s in S]
         else:
-			self.S = [sorted(s, key=operator.itemgetter(0)) for s in S]
+            self.S = [(sorted(s, key=operator.itemgetter(0))).reversed() for s in S]
 
         self.n_sen = len(self.S)
 
@@ -135,8 +136,16 @@ class LIP(object):
                print 'Search criteria met!', D_hat/D_0, ' >= ', gain
            else:
                print 'Search criteria not met', D_hat/D_0, ' < ', gain"""
-
         self.chosen_idxs = chosen_idxs
+
+    def getResults(self, values_array, keys_array):
+        #Check for empty sentences (after common and stop word removal)
+        results = []
+        for k in range(self.n_sen):
+            emb = (self.S[k][self.chosen_idxs[k]][1])
+            idx = np.where(values_array == emb)[0][0]
+            results += [keys_array[idx]]
+        return results
 
     def printResults(self, values_array, keys_array):
         #Check for empty sentences (after common and stop word removal)
@@ -148,77 +157,76 @@ class LIP(object):
 
 
 class LIPGreedy(LIP):
-	def __init__(self, message, embedding_size, lambda_ = 0.2, dist_metric = 'cosine'):
-		super(self.__class__, self).__init__(message, embedding_size, lambda_, dist_metric)
+    def __init__(self, message, embedding_size, lambda_ = 0.2, dist_metric = 'cosine'):
+        super(self.__class__, self).__init__(message, embedding_size, lambda_, dist_metric)
 
 
-	def computeBoundary(self, debug = True):
-		for k, s in enumerate(self.S):
-			budget = s[0][0] + self.lambda_*(s[len(s)-1][0]-s[0][0])
-			while(s[self.search_idx_vec[k]][0] < budget):
-				self.search_idx_vec[k] = self.search_idx_vec[k] + 1
+    def computeBoundary(self, debug = True):
+        for k, s in enumerate(self.S):
+            budget = s[0][0] + self.lambda_*(s[len(s)-1][0]-s[0][0])
+            while(s[self.search_idx_vec[k]][0] < budget):
+                self.search_idx_vec[k] = self.search_idx_vec[k] + 1
 
-		if debug:
-			print 'search indexes = ', zip(self.search_idx_vec, self.sen_len_vec)
-			print 'Reduced search space to ', 100.0*(float(sum(np.array(self.search_idx_vec)+1.0))/float(sum(self.sen_len_vec))), ' % of original space'
+        if debug:
+            print 'search indexes = ', zip(self.search_idx_vec, self.sen_len_vec)
+            print 'Reduced search space to ', 100.0*(float(sum(np.array(self.search_idx_vec)+1.0))/float(sum(self.sen_len_vec))), ' % of original space'
 
-		#Create indexing dictionary
-		self.dots = {}
-		for i in range(self.n_sen):
-			for j in range(self.search_idx_vec[i]+1):
-				self.dots[str(i)+str(j)] = {}
+        #Create indexing dictionary
+        self.dots = {}
+        for i in range(self.n_sen):
+            for j in range(self.search_idx_vec[i]+1):
+                self.dots[str(i)+str(j)] = {}
 
 
-	def selectKeywords(self, debug=True):
-		#Produce list of index permutations
-		permutations = [k for k in range(self.search_idx_vec[0]+1)]
-		for i in range(1, self.n_sen):
-			permutations = list(itertools.product(permutations, [(k) for k in range(self.search_idx_vec[i]+1)]))
-		permutations = [flat_tuple(a) for a in permutations]
-		print 'Number of permutations needed: ', len(permutations)
-		costs =  [self.computeCost(perm) for perm in permutations]
+    def selectKeywords(self, debug = True):
+        #Produce list of index permutations
+        permutations = [k for k in range(self.search_idx_vec[0]+1)]
+        for i in range(1, self.n_sen):
+            permutations = list(itertools.product(permutations, [(k) for k in range(self.search_idx_vec[i]+1)]))
+        permutations = [flat_tuple(a) for a in permutations]
+        print 'Number of permutations needed: ', len(permutations)
+        costs =  [self.computeCost(perm) for perm in permutations]
+        min_ind = permutations[np.argmin(costs)]
+        self.chosen_idxs = list(min_ind)
 
-		min_ind = permutations[np.argmin(costs)]
-		self.chosen_idxs = list(min_ind)
+        if debug:
+            costs.sort()
+            print 'Min cost = ', costs[0]
+            print 'Max cost = ', costs[len(costs) - 1]
 
-		if debug:
-			costs.sort()
-			print 'Min cost = ', costs[0]
-			print 'Max cost = ', costs[len(costs) - 1]
-
-	def computeCost(self, indexes):
-		if(self.dist_metric == 'cosine'):
-			gamma = sum([self.S[i][indexes[i]][0] for i in range(self.n_sen)])
-		else:
-			gamma = sum([self.S[i][indexes[i]][0] for i in range(self.n_sen)])
-		#For each sentence
-		delta = 0.0
-		for i in range(self.n_sen):
+    def computeCost(self, indexes):
+        if(self.dist_metric == 'cosine'):
+            gamma = sum([self.S[i][indexes[i]][0] for i in range(self.n_sen)])
+        else:
+            gamma = sum([self.S[i][indexes[i]][0] for i in range(self.n_sen)])
+        #For each sentence
+        delta = 0.0
+        for i in range(self.n_sen):
             #Add all dot products
-			delta += sum([self.computeDot(i, indexes[i], j, indexes[j]) for j, idx in enumerate(indexes)])
-		if(self.dist_metric == 'cosine'):
-			return gamma-(delta)
-		else:
-			return (-1*gamma)+delta
+            delta += sum([self.computeDot(i, indexes[i], j, indexes[j]) for j, idx in enumerate(indexes)])
+        if(self.dist_metric == 'cosine'):
+            return gamma-(delta)
+        else:
+            return (-1*gamma)+delta
 
 
-	def computeDot(self, s_i, i, s_j, j):
-		if((str(s_j)+str(j)) in self.dots[str(s_i)+str(i)]):
-			return self.dots[str(s_i)+str(i)][(str(s_j)+str(j))]
+    def computeDot(self, s_i, i, s_j, j):
+        if((str(s_j)+str(j)) in self.dots[str(s_i)+str(i)]):
+            return self.dots[str(s_i)+str(i)][(str(s_j)+str(j))]
 
-		if((str(s_i)+str(i)) in self.dots[str(s_j)+str(j)]):
-			dot = self.dots[str(s_j)+str(j)][(str(s_i)+str(i))]
-			self.dots[str(s_i)+str(i)][(str(s_j)+str(j))] = dot
-			return dot
-		if(self.dist_metric == 'cosine'):
-			dot = np.dot(self.S[s_i][i][1], self.S[s_j][j][1])
-		else:
-			dot = euclidean(self.S[s_i][i][1], self.S[s_j][j][1])
+        if((str(s_i)+str(i)) in self.dots[str(s_j)+str(j)]):
+            dot = self.dots[str(s_j)+str(j)][(str(s_i)+str(i))]
+            self.dots[str(s_i)+str(i)][(str(s_j)+str(j))] = dot
+            return dot
+        if(self.dist_metric == 'cosine'):
+            dot = np.dot(self.S[s_i][i][1], self.S[s_j][j][1])
+        else:
+            dot = euclidean(self.S[s_i][i][1], self.S[s_j][j][1])
 
-		self.dots[str(s_i)+str(i)][(str(s_j)+str(j))] = dot
-		return dot
+        self.dots[str(s_i)+str(i)][(str(s_j)+str(j))] = dot
+        return dot
 
 def flat_tuple(a):
-		if type(a) not in (tuple, list): return (a,)
-		if len(a) == 0: return tuple(a)
-		return flat_tuple(a[0]) + flat_tuple(a[1:])
+        if type(a) not in (tuple, list): return (a,)
+        if len(a) == 0: return tuple(a)
+        return flat_tuple(a[0]) + flat_tuple(a[1:])

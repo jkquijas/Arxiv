@@ -11,7 +11,7 @@ import pprint
 
 from collections import Counter
 
-lambda_ = .2
+lambda_ = .3
 
 #Clock in time
 start = time.time()
@@ -46,7 +46,7 @@ stop_words = [unicode(word) for word in stop_words]
 
 
 arxivReader = ArxivReader()
-text_data = arxivReader.readFileSplitByParagraphs("/home/jonathan/Documents/WordEmbedding/Arxiv/Data/Text/demystifying-deep-reinforcement-learning.txt")
+text_data = arxivReader.readFileSplitByParagraphs("/home/jonathan/Documents/WordEmbedding/Arxiv/Data/Text/colosseum.txt")
 print len(text_data), ' paragraphs\n'
 results = []
 for i in range(len(text_data)):
@@ -62,14 +62,14 @@ for i in range(len(text_data)):
 	lip.computeBoundary()
 	lip.selectKeywords()
 	r = lip.getResults(values_array, keys_array)
-	print r
 	results += r
 
 results.sort()
 print results
 cnt = Counter(results)
 print 'Extracted keywords'
-print [k for k, v in cnt.iteritems() if v > 3]
+k = 1
+print [k for k, v in cnt.iteritems() if v > k]
 
 
 

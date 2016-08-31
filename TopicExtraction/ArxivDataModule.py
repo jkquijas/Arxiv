@@ -81,10 +81,12 @@ class ArxivReader(ArxivObj):
 
 	def readFileSplitByParagraphs(self, filePath):
 		raw_data = open(filePath, 'r').read()
-		text_data = re.split('\n\n\t',raw_data)
+		text_data = re.split('\n\n',raw_data)
+		text_data = [re.sub(r'[^\x00-\x7F]+','', message) for message in text_data]
+		print text_data
 		text_data = [nltk.sent_tokenize(str(message)) for message in text_data]
-		text_data = [re.sub(r'\$.*?\$', '', message) for message in text_data]
-		text_data = [re.sub(r'\[.*?\]', '', message) for message in text_data]
+		#text_data = [re.sub(r'\$.*?\$', '', message) for message in text_data]
+		#text_data = [re.sub(r'\[.*?\]', '', message) for message in text_data]
 		text_data = [[TreebankWordTokenizer().tokenize(re.sub("[^a-zA-Z0-9\-]", " ", sentence).lower()) for sentence in message] for message in text_data]
 		return text_data
 

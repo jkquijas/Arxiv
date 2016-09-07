@@ -11,14 +11,12 @@ import pprint
 
 from collections import Counter
 
-lambda_ = .3
+lambda_ = .1
 
 #Clock in time
 start = time.time()
 
 common_words_path = '/home/jonathan/Documents/WordEmbedding/20Newsgroups/Data/20k.txt'
-
-
 
 
 #Get embeddings
@@ -46,7 +44,7 @@ stop_words = [unicode(word) for word in stop_words]
 
 
 arxivReader = ArxivReader()
-text_data = arxivReader.readFileSplitByParagraphs("/home/jonathan/Documents/WordEmbedding/Arxiv/Data/Text/colosseum.txt")
+text_data = arxivReader.readFileSplitByParagraphs("/home/jonathan/Documents/WordEmbedding/Arxiv/Data/Text/donQuixote.txt")
 print len(text_data), ' paragraphs\n'
 results = []
 for i in range(len(text_data)):
@@ -69,7 +67,7 @@ print results
 cnt = Counter(results)
 print 'Extracted keywords'
 k = 1
-print [k for k, v in cnt.iteritems() if v > k]
+print [word for word, occur in cnt.iteritems() if occur > k]
 
 
 

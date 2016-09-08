@@ -6,6 +6,11 @@ class TopicExtractor(object):
     def __init__(self, keywords):
         self.keywords = keywords
 
+class TopicExtractorCount(TopicExtractor):
+    def __init__(self, keywords,n):
+        super(self.__class__, self).__init__(keywords)
+        self.n = n
+    def extractTopics(self):
 
 class TopicExtractorKMeans(TopicExtractor):
     def __init__(self, keywords,k):

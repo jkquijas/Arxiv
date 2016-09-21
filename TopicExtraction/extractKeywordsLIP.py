@@ -3,7 +3,7 @@ import time
 from nltk.corpus import stopwords
 
 #from LinearInformationPropagation import LIP
-from LinearInformationPropagation import LIPGreedy
+from KeywordExtractionModule import LIPGreedy
 from EmbeddingModule import EmbeddingsReader
 from ArxivDataModule import ArxivReader
 from ArxivDataModule import ArxivManager

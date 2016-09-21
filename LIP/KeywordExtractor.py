@@ -6,12 +6,12 @@ from scipy.spatial.distance import cdist
 import operator
 import itertools
 
-from functools import reduce # Valid in Python 2.6+, required in Python 3
+from functools import reduce # Valid in Python 2.6+, required in Python 3 6
 import operator
 
 """Linear Information Propagation Model Class
    Programmed by Jonathan Quijas
-   Last modified 07/29/2016
+   Last modified 09/21/2016
 """
 class LIP(object):
     def __init__(self, message, embedding_size, lambda_ = 0.2, dist_metric = 'cosine'):
@@ -153,9 +153,14 @@ class LIPGreedy(LIP):
 
 	def computeBoundary(self, debug = True):
 		for k, s in enumerate(self.S):
-			budget = s[0][0] + self.lambda_*(s[len(s)-1][0]-s[0][0])
-			while(s[self.search_idx_vec[k]][0] < budget):
-				self.search_idx_vec[k] = self.search_idx_vec[k] + 1
+            if(self.dist_metric == 'cosine'):
+                budget = s[0][0] + self.lambda_*(s[len(s)-1][0]-s[0][0])
+                while(s[self.search_idx_vec[k]][0] < budget):
+    				self.search_idx_vec[k] = self.search_idx_vec[k] + 1
+            else:
+			    budget = s[0][0] - self.lambda_*(s[0][0]-s[len(s)-1][0])
+                while(s[self.search_idx_vec[k]][0] > budget):
+    				self.search_idx_vec[k] = self.search_idx_vec[k] + 1
 
 		if debug:
 			print 'search indexes = ', zip(self.search_idx_vec, self.sen_len_vec)
@@ -198,7 +203,7 @@ class LIPGreedy(LIP):
 		if(self.dist_metric == 'cosine'):
 			return gamma-(delta)
 		else:
-			return (-1*gamma)+delta
+			return gamma-delta
 
 
 	def computeDot(self, s_i, i, s_j, j):

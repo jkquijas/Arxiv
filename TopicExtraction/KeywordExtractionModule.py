@@ -3,7 +3,7 @@ import numpy as np
 from scipy.spatial.distance import euclidean
 from scipy.spatial.distance import cdist
 
-import operator
+from operator import itemgetter
 import itertools
 
 from functools import reduce # Valid in Python 2.6+, required in Python 3 6
@@ -22,22 +22,16 @@ class LIP(object):
         self.long_sent_len = float(max([len(sentence) for sentence in message]))
         #Compute similarity vectors, and zip with sentences
         if(self.dist_metric == 'cosine'):
-            S = [zip(np.sum(np.dot(np.array(sentence), np.array(sentence).transpose()), axis=0), sentence) for sentence in message]
+            S = [list(zip(np.sum(np.dot(np.array(sentence), np.array(sentence).transpose()), axis=0), sentence)) for sentence in message]
         else:
-            S = [zip(np.sum(cdist(np.array(sentence), np.array(sentence), 'euclidean'), axis=0), sentence) for sentence in message]
+            S = [list(zip(np.sum(cdist(np.array(sentence), np.array(sentence), 'euclidean'), axis=0), sentence)) for sentence in message]
 
 
         #Sort sentences by similarity
         if(self.dist_metric == 'cosine'):
-            self.S = [sorted(s, key=operator.itemgetter(0)) for s in S]
-            print S
-            pause
+            self.S = [sorted(s, key=itemgetter(0)) for s in S]
         else:
-            self.S = [sorted(s, key=operator.itemgetter(0)) for s in S]
-            self.S.reverse()
-            print S
-            pause
-
+            self.S = [sorted(s, key=itemgetter(0), reverse=True) for s in S]
 
         self.n_sen = len(self.S)
 
@@ -63,7 +57,7 @@ class LIP(object):
         #Compute budget!
         budget = self.gamma_min + self.lambda_*(self.gamma_max-self.gamma_min)
         if debug:
-            print 'Budget = ', budget
+            print('Budget = ', budget)
 
         gain = (budget)/self.gamma_min
         gamma_hat = self.gamma_min
@@ -101,9 +95,9 @@ class LIP(object):
             iter_count = iter_count + 1.0
 
         if debug:
-            print 'gamma_hat = ', gamma_hat
-            print 'search indexes = ', zip(self.search_idx_vec, self.sen_len_vec)
-            print 'Reduced search space to ', 100.0*(float(sum(np.array(self.search_idx_vec)+1.0))/float(sum(self.sen_len_vec))), ' % of original space'
+            print('gamma_hat = ', gamma_hat)
+            print('search indexes = ', zip(self.search_idx_vec, self.sen_len_vec))
+            print('Reduced search space to ', 100.0*(float(sum(np.array(self.search_idx_vec)+1.0))/float(sum(self.sen_len_vec))), ' % of original space')
 
     def selectKeywords(self, debug=True):
         # Linear Information Propagation (LIP) Search
@@ -135,12 +129,7 @@ class LIP(object):
 
         delta_hat = np.sum(np.sum(np.dot(R, R.transpose())))
         if debug:
-            print 'delta_hat = ', delta_hat
-
-        """if(D_hat/D_0 >= gain):
-               print 'Search criteria met!', D_hat/D_0, ' >= ', gain
-           else:
-               print 'Search criteria not met', D_hat/D_0, ' < ', gain"""
+            print('delta_hat = ', delta_hat)
 
         self.chosen_idxs = chosen_idxs
 
@@ -158,7 +147,7 @@ class LIP(object):
         for k in range(self.n_sen):
             emb = (self.S[k][self.chosen_idxs[k]][1])
             idx = np.where(values_array == emb)[0][0]
-            print 's', k, ': ', keys_array[idx]
+            print('s', k, ': ', keys_array[idx])
 
 
 
@@ -179,8 +168,8 @@ class LIPGreedy(LIP):
                     self.search_idx_vec[k] = self.search_idx_vec[k] + 1
 
         if(debug):
-            print 'search indexes = ', zip(self.search_idx_vec, self.sen_len_vec)
-            print 'Reduced search space to ', 100.0*(float(sum(np.array(self.search_idx_vec)+1.0))/float(sum(self.sen_len_vec))),' % of original space'
+            print('search indexes = ', list(zip(self.search_idx_vec, self.sen_len_vec)))
+            print('Reduced search space to ', 100.0*(float(sum(np.array(self.search_idx_vec)+1.0))/float(sum(self.sen_len_vec))),' % of original space')
 
 		#Create indexing dictionary
         self.dots = {}
@@ -195,7 +184,7 @@ class LIPGreedy(LIP):
         for i in range(1, self.n_sen):
             permutations = list(itertools.product(permutations, [(k) for k in range(self.search_idx_vec[i]+1)]))
         permutations = [flat_tuple(a) for a in permutations]
-        print 'Number of permutations needed: ', len(permutations)
+        print('Number of permutations needed: ', len(permutations))
         costs =  [self.computeCost(perm) for perm in permutations]
 
         min_ind = permutations[np.argmin(costs)]
@@ -203,8 +192,8 @@ class LIPGreedy(LIP):
 
         if(debug):
             costs.sort()
-            print 'Min cost = ', costs[0]
-            print 'Max cost = ', costs[len(costs) - 1]
+            print('Min cost = ', costs[0])
+            print('Max cost = ', costs[len(costs) - 1])
 
     def computeCost(self, indexes):
         if(self.dist_metric == 'cosine'):
@@ -219,7 +208,7 @@ class LIPGreedy(LIP):
         if(self.dist_metric == 'cosine'):
             return gamma-(delta)
         else:
-            return gamma-delta
+            return -1*gamma+delta
 
 
     def computeDot(self, s_i, i, s_j, j):
@@ -239,6 +228,8 @@ class LIPGreedy(LIP):
         return dot
 
 def flat_tuple(a):
-		if type(a) not in (tuple, list): return (a,)
-		if len(a) == 0: return tuple(a)
-		return flat_tuple(a[0]) + flat_tuple(a[1:])
+    if(type(a) not in (tuple, list)):
+        return (a,)
+    if(len(a) == 0):
+        return tuple(a)
+    return flat_tuple(a[0]) + flat_tuple(a[1:])

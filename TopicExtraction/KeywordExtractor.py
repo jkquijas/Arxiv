@@ -11,7 +11,7 @@ import operator
 
 """Linear Information Propagation Model Class
    Programmed by Jonathan Quijas
-   Last modified 09/21/2016
+   Last modified 09/25/2016
 """
 class LIP(object):
     def __init__(self, message, embedding_size, lambda_ = 0.2, dist_metric = 'cosine'):

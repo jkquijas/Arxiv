@@ -8,25 +8,32 @@ from EmbeddingModule import EmbeddingsReader
 from ArxivDataModule import ArxivReader
 from ArxivDataModule import ArxivManager
 import pprint
+import platform
 
 from collections import Counter
 
-lambda_ = .1
+lambda_ = .3
 
 #Clock in time
 start = time.time()
+if(platform.system() == 'Windows'):
+	common_words_path = 'C:\\Users\\Jona Q\\Documents\\Embeddings\\20k.txt'
+	text_data_path = "C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\Text\\voxelHashing.txt"
 
-common_words_path = '/home/jonathan/Documents/WordEmbedding/20Newsgroups/Data/20k.txt'
+else:
+	common_words_path = '/home/jonathan/Documents/WordEmbedding/20Newsgroups/Data/20k.txt'
+	text_data_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/Text/donQuixote.txt"
 
 
 #Get embeddings
 embObj = EmbeddingsReader()
 normalize = True
 embeddings = embObj.readEmbeddings(normalize)
-
 #Store arrays with all embedding values
 values_array = embObj.valuesArray()
+print(type(values_array))
 keys_array = embObj.keysArray()
+print(values_array[0])
 
 
 #Create stopwords set
@@ -40,15 +47,18 @@ num_common_words = 600
 #Update stopwrd set with common words
 stop_words.update(common_words_list[0:num_common_words])
 #Convert to unicode
-stop_words = [unicode(word) for word in stop_words]
+if(platform.system() == 'Windows'):
+	stop_words = [word for word in stop_words]
+else:
+    stop_words = [unicode(word) for word in stop_words]
 
 
 arxivReader = ArxivReader()
-text_data = arxivReader.readFileSplitByParagraphs("/home/jonathan/Documents/WordEmbedding/Arxiv/Data/Text/donQuixote.txt")
-print len(text_data), ' paragraphs\n'
+text_data = arxivReader.readFileSplitByParagraphs(text_data_path)
+print(len(text_data), ' paragraphs\n')
 results = []
 for i in range(len(text_data)):
-	print 'Paragraph ', i, '\n'
+	print('Paragraph ', i, '\n')
 	message = text_data[i]
 	#print message
 	#Map all words to their embeddings
@@ -56,18 +66,21 @@ for i in range(len(text_data)):
 	#Check for empty sentences (after common and stop word removal)
 	message = [sen for sen in message if len(sen) > 0]
 
-	lip = LIPGreedy(message, embObj.embeddingSize(), lambda_, 'cosine')
+	lip = LIPGreedy(message, embObj.embeddingSize(), lambda_, 'euclidean')
 	lip.computeBoundary()
 	lip.selectKeywords()
 	r = lip.getResults(values_array, keys_array)
 	results += r
 
 results.sort()
-print results
+print(results)
 cnt = Counter(results)
-print 'Extracted keywords'
+print('Extracted keywords')
 k = 1
-print [word for word, occur in cnt.iteritems() if occur > k]
+if(platform.system() == 'Windows'):
+	print([word for word, occur in iter(cnt.items()) if occur > k])
+else:
+    print([word for word, occur in cnt.iteritems() if occur > k])
 
 
 

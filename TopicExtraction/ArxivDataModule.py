@@ -53,7 +53,11 @@ class ArxivCrawler(ArxivObj):
         event_data_location = lambda x: x.name == ArxivObj.soupTag
         #Read data
         for i, url in enumerate(self.urls):
-            data = urllib.urlopen(url).read()
+            if(platform.system() == 'Windows'):
+                with urllib.request.urlopen(url) as my_url:
+                    data = my_url.read()
+            else:
+                data = urllib.urlopen(url).read()
             #Create Soup XML parser
             soup = Soup(data)
             events = soup.findAll(event_data_location)

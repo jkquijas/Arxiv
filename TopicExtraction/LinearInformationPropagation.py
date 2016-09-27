@@ -152,7 +152,7 @@ class LIP(object):
         for k in range(self.n_sen):
             emb = (self.S[k][self.chosen_idxs[k]][1])
             idx = np.where(values_array == emb)[0][0]
-            print 's', k, ': ', keys_array[idx]
+            print 's', k+1, ': ', keys_array[idx]
 
 
 

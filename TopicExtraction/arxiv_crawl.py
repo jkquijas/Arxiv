@@ -16,4 +16,4 @@ n_results = 5
 arxiv = ArxivCrawler(n_results, search_field).crawl()
 #Clock in time
 final_time = time.time() - start
-print 'Finished after ', final_time
+print('Finished after ', final_time)

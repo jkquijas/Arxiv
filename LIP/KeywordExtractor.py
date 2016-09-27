@@ -95,7 +95,7 @@ class LIP(object):
 
         if debug:
             print 'gamma_hat = ', gamma_hat
-            print 'search indexes = ', zip(self.search_idx_vec, self.sen_len_vec)
+            print 'search indexes = ', zip([x+1 for x in self.search_idx_vec], self.sen_len_vec)
             print 'Reduced search space to ', 100.0*(float(sum(np.array(self.search_idx_vec)+1.0))/float(sum(self.sen_len_vec))), ' % of original space'
 
     def selectKeywords(self, debug=True):

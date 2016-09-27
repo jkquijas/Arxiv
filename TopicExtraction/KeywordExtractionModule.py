@@ -11,7 +11,7 @@ import operator
 
 """Linear Information Propagation Model Class
    Programmed by Jonathan Quijas
-   Last modified 09/21/2016
+   Last modified 09/25/2016
 """
 class LIP(object):
     def __init__(self, message, embedding_size, lambda_ = 0.2, dist_metric = 'cosine'):
@@ -168,7 +168,7 @@ class LIPGreedy(LIP):
                     self.search_idx_vec[k] = self.search_idx_vec[k] + 1
 
         if(debug):
-            print('search indexes = ', list(zip(self.search_idx_vec, self.sen_len_vec)))
+            print('search indexes = ', list(zip([x+1 for x in self.search_idx_vec], self.sen_len_vec)))
             print('Reduced search space to ', 100.0*(float(sum(np.array(self.search_idx_vec)+1.0))/float(sum(self.sen_len_vec))),' % of original space')
 
 		#Create indexing dictionary
@@ -206,7 +206,7 @@ class LIPGreedy(LIP):
             #Add all dot products
             delta += sum([self.computeDot(i, indexes[i], j, indexes[j]) for j, idx in enumerate(indexes)])
         if(self.dist_metric == 'cosine'):
-            return gamma-(delta)
+            return gamma-delta
         else:
             return -1*gamma+delta
 
@@ -220,7 +220,10 @@ class LIPGreedy(LIP):
             self.dots[str(s_i)+str(i)][(str(s_j)+str(j))] = dot
             return dot
         if(self.dist_metric == 'cosine'):
-            dot = np.dot(self.S[s_i][i][1], self.S[s_j][j][1])
+            if(euclidean(self.S[s_i][i][1], self.S[s_j][j][1]) == 0.0 ):
+                dot = -100000000
+            else:
+                dot = np.dot(self.S[s_i][i][1], self.S[s_j][j][1])
         else:
             dot = euclidean(self.S[s_i][i][1], self.S[s_j][j][1])
 

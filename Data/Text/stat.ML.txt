@@ -1,0 +1,77 @@
+<summary>  We propose a new framework for deriving screening rules for convex
+optimization problems. Our approach covers a large class of constrained and
+penalized optimization formulations, and works in two steps. First, given any
+approximate point, the structure of the objective function and the duality gap
+is used to gather information on the optimal solution. In the second step, this
+information is used to produce screening rules, i.e. safely identifying
+unimportant weight variables of the optimal solution. Our general framework
+leads to a large variety of useful existing as well as new screening rules for
+many applications. For example, we provide new screening rules for general
+simplex and $L_1$-constrained problems, Elastic Net, squared-loss Support
+Vector Machines, minimum enclosing ball, as well as structured norm regularized
+problems, such as group lasso.
+</summary><summary>  Recently, several models based on deep neural networks have achieved great
+success in terms of both reconstruction accuracy and computational performance
+for single image super-resolution. In these methods, the low resolution (LR)
+input image is upscaled to the high resolution (HR) space using a single
+filter, commonly bicubic interpolation, before reconstruction. This means that
+the super-resolution (SR) operation is performed in HR space. We demonstrate
+that this is sub-optimal and adds computational complexity. In this paper, we
+present the first convolutional neural network (CNN) capable of real-time SR of
+1080p videos on a single K2 GPU. To achieve this, we propose a novel CNN
+architecture where the feature maps are extracted in the LR space. In addition,
+we introduce an efficient sub-pixel convolution layer which learns an array of
+upscaling filters to upscale the final LR feature maps into the HR output. By
+doing so, we effectively replace the handcrafted bicubic filter in the SR
+pipeline with more complex upscaling filters specifically trained for each
+feature map, whilst also reducing the computational complexity of the overall
+SR operation. We evaluate the proposed approach using images and videos from
+publicly available datasets and show that it performs significantly better
+(+0.15dB on Images and +0.39dB on Videos) and is an order of magnitude faster
+than previous CNN-based methods.
+</summary><summary>  The softmax representation of probabilities for categorical variables plays a
+prominent role in modern machine learning with numerous applications is areas
+such as large scale classification, neural language modeling and recommendation
+systems. However, softmax estimation is very expensive for large scale
+inference because of the high cost associated with computing the normalizing
+constant. Here, we introduce an efficient approximation to softmax
+probabilities which takes the form of a rigorous lower bound on the exact
+probability. This bound is expressed as a product over pairwise probabilities
+and it leads to scalable estimation based on stochastic optimization. It allows
+us to perform doubly stochastic estimation by subsampling both training
+instances and class labels. We show that the new bound has interesting
+theoretical properties and we demonstrate its use in classification problems.
+</summary><summary>  We consider sequential or active ranking of a set of n items based on noisy
+pairwise comparisons. Items are ranked according to the probability that a
+given item beats a randomly chosen item, and ranking refers to partitioning the
+items into sets of pre-specified sizes according to their scores. This notion
+of ranking includes as special cases the identification of the top-k items and
+the total ordering of the items. We first analyze a sequential ranking
+algorithm that counts the number of comparisons won, and uses these counts to
+decide whether to stop, or to compare another pair of items, chosen based on
+confidence intervals specified by the data collected up to that point. We prove
+that this algorithm succeeds in recovering the ranking using a number of
+comparisons that is optimal up to logarithmic factors. This guarantee does not
+require any structural properties of the underlying pairwise probability
+matrix, unlike a significant body of past work on pairwise ranking based on
+parametric models such as the Thurstone or Bradley-Terry-Luce models. It has
+been a long-standing open question as to whether or not imposing these
+parametric assumptions allows for improved ranking algorithms. For stochastic
+comparison models, in which the pairwise probabilities are bounded away from
+zero, our second contribution is to resolve this issue by proving a lower bound
+for parametric models. This shows, perhaps surprisingly, that these popular
+parametric modeling choices offer at most logarithmic gains for stochastic
+comparisons.
+</summary><summary>  We propose a penalized likelihood method to fit the linear discriminant
+analysis model when the predictor is matrix valued. We simultaneously estimate
+the means and the precision matrix, which we assume has a Kronecker product
+decomposition. Our penalties encourage pairs of response category mean matrices
+to have equal entries and also encourage zeros in the precision matrix. To
+compute our estimators, we use a blockwise coordinate descent algorithm. To
+update the optimization variables corresponding to response category mean
+matrices, we use an alternating minimization algorithm that takes advantage of
+the Kronecker structure of the precision matrix. We show that our method can
+outperform relevant competitors in classification, even when our modeling
+assumptions are violated. We analyze an EEG dataset to demonstrate our method's
+interpretability and classification accuracy.
+</summary>

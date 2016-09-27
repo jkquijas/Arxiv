@@ -1,0 +1,73 @@
+We present the first deep learning model to successfully learn control policies directly  from  high-dimensional  sensory  input  using  reinforcement  learning.
+The model  is  a  convolutional  neural  network,  trained  with  a  variant  of  Q-learning, whose input is raw pixels and whose output is a value function estimating future rewards.
+We apply our method to seven Atari 2600 games from the Arcade Learning Environment, with no adjustment of the architecture or learning algorithm.
+We find that it outperforms all previous approaches on six of the games and surpasses a human expert on three of them.
+
+Learning to control agents directly from high-dimensional sensory inputs like vision and speech is one of the long-standing challenges of reinforcement learning (RL).
+Most successful RL applications that operate on these domains have relied on hand-crafted features combined with linear value functions or policy representations.
+Clearly, the performance of such systems heavily relies on the quality of the feature representation.
+
+Recent advances in deep learning have made it possible to extract high-level features from raw sensory data, leading to breakthroughs in computer vision [11, 22, 16] and speech recognition [6, 7].
+These methods utilise a range of neural network architectures, including convolutional networks, multilayer perceptrons, restricted Boltzmann machines and recurrent neural networks, and have exploited both supervised and unsupervised learning.
+It seems natural to ask whether similar techniques could also be beneficial for RL with sensory data.
+
+However  reinforcement  learning  presents  several  challenges  from  a  deep  learning  perspective.
+Firstly,  most successful deep learning applications to date have required large amounts of hand-labeled training data.
+RL algorithms, on the other hand, must be able to learn from a scalar reward signal that is frequently sparse, noisy and delayed.
+The delay between actions and resulting rewards, which can be thousands of timesteps long, seems particularly daunting when compared to the direct association between inputs and targets found in supervised learning.
+Another issue is that most deep learning algorithms assume the data samples to be independent, while in reinforcement learning one typically encounters sequences of highly correlated states.
+Furthermore, in RL the data distribution changes as the algorithm learns new behaviours, which can be problematic for deep learning methods that assume a fixed underlying distribution.
+
+This paper demonstrates that a convolutional neural network can overcome these challenges to learn successful control  policies  from  raw  video  data  in  complex  RL  environments.
+The  network  is trained with a variant of the Q-learning [26] algorithm, with stochastic gradient descent to update the weights.
+To alleviate the problems of correlated data and non-stationary distributions, we use an experience replay mechanism [13] which randomly samples previous transitions, and thereby smooths the training distribution over many past behaviors.
+
+We apply our approach to a range of Atari 2600 games implemented in The Arcade Learning Environment (ALE).
+Atari 2600 is a challenging RL testbed that presents agents with a high dimensional visual input (210 x 160 RGB video at 60Hz) and a diverse and interesting set of tasks that were designed to be difficult for humans players.
+Our goal is to create a single neural network agent that is able to successfully learn to play as many of the games as possible.
+The network was not provided with any game-specific information or hand-designed visual features, and was not privy to the internal state of the emulator;
+it learned from nothing but the video input, the reward and terminal signals, and the set of possible actions—just as a human player would.
+Furthermore the network architecture and all hyperparameters used for training were kept constant across the games.
+So far the network has outperformed all previous RL algorithms on six of the seven games we have attempted and surpassed an expert human player on three of them.
+Figure 1 provides sample screenshots from five of the games used for training.
+
+We consider tasks in which an agent interacts with an environment, in this case the Atari emulator, in a sequence of actions, observations and rewards.
+At each time-step the agent selects an action from the set of legal game actions.
+The action is passed to the emulator and modifies  its  internal  state  and  the  game  score.
+In  general may  be  stochastic.
+The  emulator’s internal state is not observed by the agent; instead it observes an image from the emulator, which is a vector of raw pixel values representing the current screen.
+In addition it receives a reward representing the change in game score.
+Note that in general the game score may depend on the whole prior sequence of actions and observations;
+feedback about an action may only be received after many thousands of time-steps have elapsed.
+
+Since the agent only observes images of the current screen, the task is partially observed and many emulator states are perceptually aliased, i.e. it is impossible to fully understand the current situation from only the current screen.
+We therefore consider sequences of actions and observations, and learn game strategies that depend upon these sequences.
+All sequences in the emulator are assumed to terminate in a finite number of time-steps.
+This formalism gives rise to a large but finite Markov decision process (MDP) in which each sequence is a distinct state.
+As a result, we can apply standard reinforcement learning methods for MDPs, simply by using the complete sequence as the state representation at time.
+
+The goal of the agent is to interact with the emulator by selecting actions in a way that maximises future rewards.
+We make the standard assumption that future rewards are discounted by a factor of per time-step, and define the future discounted return at time t as R, where T is the time-step at which the game terminates.
+We define the optimal action-value function Q(s;a) as the maximum expected return achievable by following any strategy, after seeing some sequence s and then taking some action a, where is a policy mapping sequences to actions (or distributions over actions).
+
+The optimal action-value function obeys an important identity known as the Bellman equation.
+This is based on the following intuition:  if the optimal value of the sequence s0 at the next time-step was known for all possible actions a0, then the optimal strategy is to select the action a0 maximising the expected value of r.\
+
+The basic idea behind many reinforcement learning algorithms is to estimate the action-value function, by using the Bellman equation as an iterative update.
+Such value iteration algorithms converge to the optimal action-value function.
+In practice, this basic approach is totally impractical, because the action-value function is estimated separately for each sequence, without any generalisation.
+Instead, it is common to use a function approximator to estimate the action-value function.
+In the reinforcement learning community this is typically a linear function approximator, but sometimes a non-linear function approximator is used instead, such as a neural network.
+We refer to a neural network function approximator with weights as a Q-network.
+
+A Q-network can be trained by minimising a sequence of loss functions that changes at each iteration, where is the target for iteration and is a probability distribution over sequences and actions that we refer to as the behaviour distribution.
+The parameters from the previous iteration are held fixed when optimising the loss function.
+Note that the targets depend on the network weights; this is in contrast with the targets used for supervised learning, which are fixed before learning begins.
+Differentiating the loss function with respect to the weights we arrive at the following gradient.
+
+Rather than computing the full expectations in the above gradient, it is often computationally expedient to optimise the loss function by stochastic gradient descent.
+If the weights are updated after every time-step, and the expectations are replaced by single samples from the behaviour distribution and the emulator respectively, then we arrive at the familiar Q-learning algorithm.
+
+Note that this algorithm is model-free: it solves the reinforcement learning task directly using samples from the emulator, without explicitly constructing an estimate of.
+It is also off-policy: it learns about the greedy strategy, while following a behaviour distribution that ensures adequate exploration of the state space.
+In practice, the behaviour distribution is often selected by an e-greedy strategy that follows the greedy strategy with probability 1-e and selects a random action with probability e.

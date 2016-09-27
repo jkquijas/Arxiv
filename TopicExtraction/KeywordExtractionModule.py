@@ -9,9 +9,9 @@ import itertools
 from functools import reduce # Valid in Python 2.6+, required in Python 3 6
 import operator
 
-"""Linear Information Propagation Model Class
+"""Keyword Extraction Model Class
    Programmed by Jonathan Quijas
-   Last modified 09/25/2016
+   Last modified 09/27/2016
 """
 class LIP(object):
     def __init__(self, message, embedding_size, lambda_ = 0.2, dist_metric = 'cosine'):
@@ -45,12 +45,6 @@ class LIP(object):
         #Compute gamma boundaries
         self.gamma_min = sum(s[0][0] for s in self.S)
         self.gamma_max = sum(s[len(s)-1][0] for s in self.S)
-        """if(self.dist_metric == 'cosine'):
-            self.gamma_min = sum(s[0][0] for s in self.S)
-            self.gamma_max = sum(s[len(s)-1][0] for s in self.S)
-        else:
-            self.gamma_min = sum(s[0][0] for s in self.S)
-            self.gamma_max = sum(s[len(s)-1][0] for s in self.S)"""
 
 
     def computeBoundary(self, debug=True):
@@ -63,12 +57,12 @@ class LIP(object):
         gamma_hat = self.gamma_min
 
         iter_count = 1.0
-        R = np.zeros((self.n_sen, self.embedding_size))
+        """R = np.zeros((self.n_sen, self.embedding_size))
         for k in range(self.n_sen):
-            R[k,:] = self.S[k][0][1]
+            R[k,:] = self.S[k][0][1]"""
+        R = np.array([self.S[k][0][1] for k in range(self.n_sen)])
 
         delta_0 = np.sum(np.sum(np.dot(R, R.transpose())))
-        """print 'delta_0 = ', delta_0"""
 
 
         #Compute search boundaries defined by gamma_hat
@@ -148,6 +142,9 @@ class LIP(object):
             emb = (self.S[k][self.chosen_idxs[k]][1])
             idx = np.where(values_array == emb)[0][0]
             print('s', k, ': ', keys_array[idx])
+            worst_emb = (self.S[k][self.worst_idx[k]][1])
+            idx = np.where(values_array == worst_emb)[0][0]
+            print('worst ', k, ':', )
 
 
 
@@ -188,7 +185,9 @@ class LIPGreedy(LIP):
         costs =  [self.computeCost(perm) for perm in permutations]
 
         min_ind = permutations[np.argmin(costs)]
+        max_ind = permutations[np.argmax(costs)]
         self.chosen_idxs = list(min_ind)
+        self.worst_idxs = list(max_ind)
 
         if(debug):
             costs.sort()
@@ -220,10 +219,7 @@ class LIPGreedy(LIP):
             self.dots[str(s_i)+str(i)][(str(s_j)+str(j))] = dot
             return dot
         if(self.dist_metric == 'cosine'):
-            if(euclidean(self.S[s_i][i][1], self.S[s_j][j][1]) == 0.0 ):
-                dot = -100000000
-            else:
-                dot = np.dot(self.S[s_i][i][1], self.S[s_j][j][1])
+            dot = np.dot(self.S[s_i][i][1], self.S[s_j][j][1])
         else:
             dot = euclidean(self.S[s_i][i][1], self.S[s_j][j][1])
 

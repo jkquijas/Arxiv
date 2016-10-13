@@ -8,7 +8,7 @@ Most successful RL applications that operate on these domains have relied on han
 Clearly, the performance of such systems heavily relies on the quality of the feature representation.
 
 Recent advances in deep learning have made it possible to extract high-level features from raw sensory data, leading to breakthroughs in computer vision [11, 22, 16] and speech recognition [6, 7].
-These methods utilise a range of neural network architectures, including convolutional networks, multilayer perceptrons, restricted Boltzmann machines and recurrent neural networks, and have exploited both supervised and unsupervised learning.
+These methods utilize a range of neural network architectures, including convolutional networks, multilayer perceptrons, restricted Boltzmann machines and recurrent neural networks, and have exploited both supervised and unsupervised learning.
 It seems natural to ask whether similar techniques could also be beneficial for RL with sensory data.
 
 However  reinforcement  learning  presents  several  challenges  from  a  deep  learning  perspective.

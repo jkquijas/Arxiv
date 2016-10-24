@@ -4,11 +4,12 @@ from nltk.corpus import stopwords
 
 
 from TopicExtraction.KeywordExtractionModule import LIPGreedy
+from TopicExtraction.KeywordExtractionModule import LIP
 from TopicExtraction.EmbeddingModule import EmbeddingsReader
 from TopicExtraction.ArxivDataModule import ArxivReader
 from TopicExtraction.ArxivDataModule import ArxivManager
-from LIP.TopicExtractor.TopicExtractor import TopicExtractorCount
-from LIP.TopicExtractor.TopicExtractor import TopicExtractorKMeans
+from TopicExtraction.TopicExtractor import TopicExtractorCount
+from TopicExtraction.TopicExtractor import TopicExtractorKMeans
 import pprint
 import platform
 
@@ -20,7 +21,7 @@ lambda_ = .05
 start = time.time()
 if(platform.system() == 'Windows'):
 	common_words_path = 'C:\\Users\\Jona Q\\Documents\\Embeddings\\20k.txt'
-	text_data_path = "C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\Text\\atari.txt"
+	text_data_path = "C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\Text\\donQuixote.txt"
 
 else:
 	common_words_path = '/home/jonathan/Documents/WordEmbedding/20Newsgroups/Data/20k.txt'
@@ -65,7 +66,8 @@ for i in range(len(text_data)):
 	#Check for empty sentences (after common and stop word removal)
 	message = [sen for sen in message if len(sen) > 3]
 
-	lip = LIPGreedy(message, embObj.embeddingSize(), lambda_, 'cosine')
+	#lip = LIPGreedy(message, embObj.embeddingSize(), lambda_, 'cosine')
+	lip = LIP(message, embObj.embeddingSize(), lambda_, 'cosine')
 	lip.computeBoundary()
 	lip.selectKeywords()
 	r = lip.getResults(values_array, keys_array)
@@ -86,24 +88,3 @@ elif(topic_extractor_type == 'kmeans'):
     k = int(round(len(results)/5))
     topicExtractor = TopicExtractorKMeans(results, k)
     topicExtractor.extractTopics(values_array, keys_array)
-	#Print summary sentence
-
-
-
-
-
-"""arxivManager = ArxivManager()
-for c in arxivManager.categories():
-	text_data = arxivManager.read(c)
-	for i, message in enumerate(text_data):
-		print 'Message ', i+1
-		#Map all words to their embeddings
-		message = [[embeddings.get(word) for word in sentences if word not in stop_words and embeddings.get(word) is not None] for sentences in message]
-		#Check for empty sentences (after common and stop word removal)
-		message = [sen for sen in message if len(sen) > 0]
-
-		#message = embObj.mapWords(message)
-		lip = LIPGreedy(message, embObj.embeddingSize(), lambda_)
-		lip.computeBoundary()
-		lip.selectKeywords()
-		lip.printResults(values_array, keys_array)"""

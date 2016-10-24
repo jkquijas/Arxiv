@@ -11,7 +11,7 @@ import operator
 
 """Keyword Extraction Model Class
    Programmed by Jonathan Quijas
-   Last modified 09/27/2016
+   Last modified 10/13/2016
 """
 class LIP(object):
     def __init__(self, message, embedding_size, lambda_ = 0.2, dist_metric = 'cosine'):
@@ -25,7 +25,6 @@ class LIP(object):
             S = [list(zip(np.sum(np.dot(np.array(sentence), np.array(sentence).transpose()), axis=0), sentence)) for sentence in message]
         else:
             S = [list(zip(np.sum(cdist(np.array(sentence), np.array(sentence), 'euclidean'), axis=0), sentence)) for sentence in message]
-
 
         #Sort sentences by similarity
         if(self.dist_metric == 'cosine'):
@@ -41,57 +40,31 @@ class LIP(object):
         self.sen_len_vec = [float(len(s)) for s in message]
 
 
-
         #Compute gamma boundaries
         self.gamma_min = sum(s[0][0] for s in self.S)
         self.gamma_max = sum(s[len(s)-1][0] for s in self.S)
 
 
-    def computeBoundary(self, debug=True):
-        #Compute budget!
-        budget = self.gamma_min + self.lambda_*(self.gamma_max-self.gamma_min)
-        if debug:
-            print('Budget = ', budget)
+    def computeBoundary(self, debug = True):
+        for k, s in enumerate(self.S):
+            if(self.dist_metric == 'cosine'):
+                budget = s[0][0] + self.lambda_*(s[len(s)-1][0]-s[0][0])
+                while(s[self.search_idx_vec[k]][0] < budget):
+                    self.search_idx_vec[k] = self.search_idx_vec[k] + 1
+            else:
+                budget = s[0][0] - self.lambda_*(s[0][0]-s[len(s)-1][0])
+                while(s[self.search_idx_vec[k]][0] > budget):
+                    self.search_idx_vec[k] = self.search_idx_vec[k] + 1
 
-        gain = (budget)/self.gamma_min
-        gamma_hat = self.gamma_min
+        if(debug):
+            print('search indexes = ', list(zip([x+1 for x in self.search_idx_vec], self.sen_len_vec)))
+            print('Reduced search space to ', 100.0*(float(sum(np.array(self.search_idx_vec)+1.0))/float(sum(self.sen_len_vec))),' % of original space')
 
-        iter_count = 1.0
-        """R = np.zeros((self.n_sen, self.embedding_size))
-        for k in range(self.n_sen):
-            R[k,:] = self.S[k][0][1]"""
-        R = np.array([self.S[k][0][1] for k in range(self.n_sen)])
-
-        delta_0 = np.sum(np.sum(np.dot(R, R.transpose())))
-
-
-        #Compute search boundaries defined by gamma_hat
-        while (gamma_hat <= budget and iter_count < self.long_sent_len):
-            search_prcnt = iter_count/self.long_sent_len
-            changes = [0 for k in range(self.n_sen)]
-            #Determine new search index for each sentence
-            for k in range(self.n_sen):
-                if((self.search_idx_vec[k]+2.0) / self.sen_len_vec[k] <= search_prcnt):
-                    self.search_idx_vec[k] = self.search_idx_vec[k]+1
-                    changes[k] = -1
-            #Compute new gamma_hat
-            gamma_hat = 0
-            gamma_hat = sum(s[self.search_idx_vec[k]][0] for k, s in enumerate(self.S))
-
-
-            #If we passed our budget, revert changes and exit
-            if gamma_hat > budget:
-                gamma_hat = 0
-                self.search_idx_vec = [sum(x) for x in zip(self.search_idx_vec, changes)]
-                gamma_hat = sum(s[self.search_idx_vec[k]][0] for k, s in enumerate(self.S))
-                break
-
-            iter_count = iter_count + 1.0
-
-        if debug:
-            print('gamma_hat = ', gamma_hat)
-            print('search indexes = ', zip(self.search_idx_vec, self.sen_len_vec))
-            print('Reduced search space to ', 100.0*(float(sum(np.array(self.search_idx_vec)+1.0))/float(sum(self.sen_len_vec))), ' % of original space')
+		#Create indexing dictionary
+        self.dots = {}
+        for i in range(self.n_sen):
+            for j in range(self.search_idx_vec[i]+1):
+                self.dots[str(i)+str(j)] = {}
 
     def selectKeywords(self, debug=True):
         # Linear Information Propagation (LIP) Search
@@ -116,15 +89,6 @@ class LIP(object):
                 if(sim > delta):
                     delta = sim
                     chosen_idxs[k] = ii
-
-        R = np.zeros((self.n_sen, self.embedding_size))
-        for k in range(self.n_sen):
-            R[k,:] = self.S[k][chosen_idxs[k]][1]
-
-        delta_hat = np.sum(np.sum(np.dot(R, R.transpose())))
-        if debug:
-            print('delta_hat = ', delta_hat)
-
         self.chosen_idxs = chosen_idxs
 
     def getResults(self, values_array, keys_array):

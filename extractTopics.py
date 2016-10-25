@@ -5,6 +5,7 @@ from nltk.corpus import stopwords
 
 from TopicExtraction.KeywordExtractionModule import LIPGreedy
 from TopicExtraction.KeywordExtractionModule import LIP
+from TopicExtraction.KeywordExtractionModule import AbstractLIP
 from TopicExtraction.EmbeddingModule import EmbeddingsReader
 from TopicExtraction.ArxivDataModule import ArxivReader
 from TopicExtraction.ArxivDataModule import ArxivManager
@@ -15,7 +16,7 @@ import platform
 
 from collections import Counter
 
-lambda_ = .05
+lambda_ = .25
 
 #Clock in time
 start = time.time()
@@ -24,8 +25,8 @@ if(platform.system() == 'Windows'):
 	text_data_path = "C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\Text\\donQuixote.txt"
 
 else:
-	common_words_path = '/home/jonathan/Documents/WordEmbedding/20Newsgroups/Data/20k.txt'
-	text_data_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/Text/donQuixote.txt"
+	common_words_path = '/home/jonathan/Documents/WordEmbedding/Arxiv/Data/20k.txt'
+	text_data_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/Text/clusteringTimeSeries.txt"
 
 
 #Get embeddings
@@ -54,7 +55,10 @@ else:
     stop_words = [unicode(word) for word in stop_words]
 
 arxivReader = ArxivReader()
-text_data = arxivReader.readFileSplitByParagraphs(text_data_path)
+#tags = ['NN','NNS', 'JJ', 'RB', 'VBP', 'VB']
+tags = ['NN','NNS', 'VBP', 'VB']
+text_data = arxivReader.readAbstractFileAndFilterByTags(text_data_path, tags)
+#print(text_data)
 print(len(text_data), ' paragraphs\n')
 results = []
 for i in range(len(text_data)):
@@ -67,7 +71,8 @@ for i in range(len(text_data)):
 	message = [sen for sen in message if len(sen) > 3]
 
 	#lip = LIPGreedy(message, embObj.embeddingSize(), lambda_, 'cosine')
-	lip = LIP(message, embObj.embeddingSize(), lambda_, 'cosine')
+	#lip = LIP(message, embObj.embeddingSize(), lambda_, 'cosine')
+	lip = AbstractLIP(message, embObj.embeddingSize(), lambda_, 'cosine')
 	lip.computeBoundary()
 	lip.selectKeywords()
 	r = lip.getResults(values_array, keys_array)
@@ -86,5 +91,6 @@ if(topic_extractor_type == 'count'):
 elif(topic_extractor_type == 'kmeans'):
     results = np.array([embeddings.get(word) for word in results])
     k = int(round(len(results)/5))
+    k = 5
     topicExtractor = TopicExtractorKMeans(results, k)
     topicExtractor.extractTopics(values_array, keys_array)

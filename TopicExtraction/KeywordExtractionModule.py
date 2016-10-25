@@ -190,6 +190,20 @@ class LIPGreedy(LIP):
         self.dots[str(s_i)+str(i)][(str(s_j)+str(j))] = dot
         return dot
 
+class AbstractLIP(LIP):
+    def __init__(self, message, embedding_size, lambda_ = 0.2, dist_metric = 'cosine'):
+        super(self.__class__, self).__init__(message, embedding_size, lambda_, dist_metric)
+
+    def selectKeywords(self, debug=True):
+        self.chosen_idxs = [0 for self.s in self.S]
+        self.keywordMap = {}
+        for i, s in enumerate(self.S):
+            while(np.array_str(s[self.chosen_idxs[i]][1]) in self.keywordMap):
+                self.chosen_idxs[i] =  self.chosen_idxs[i] + 1
+            self.keywordMap[np.array_str(s[self.chosen_idxs[i]][1])] = True
+
+
+
 def flat_tuple(a):
     if(type(a) not in (tuple, list)):
         return (a,)

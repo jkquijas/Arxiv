@@ -98,15 +98,14 @@ class ArxivReader(ArxivObj):
         text_data = [[TreebankWordTokenizer().tokenize(re.sub("[^a-zA-Z0-9\-]", " ", sentence).lower()) for sentence in message] for message in text_data]
         return text_data
 
-    def readAbstractFileAndFilterByTags(self, filePath, tags):
+    def readAbstractFileAndFilterByTags(self, filePath):
         raw_data = open(filePath, 'r').read()
         text_data = nltk.tokenize.sent_tokenize(raw_data)
         text_data = [re.sub(r'[^\x00-\x7F]+','', sentence) for sentence in text_data]
         text_data = [re.sub("[^a-zA-Z0-9\-]", " ", sentence).lower() for sentence in text_data]
         text_data = [nltk.pos_tag(nltk.word_tokenize(sentence)) for sentence in text_data]
-        text_data = [[ word[0] for word in sentence if word[1] in tags] for sentence in text_data]
 
-        print(text_data)
+
         return [text_data]
 
 class ArxivWriter(ArxivObj):

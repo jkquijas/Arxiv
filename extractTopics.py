@@ -26,7 +26,7 @@ if(platform.system() == 'Windows'):
 
 else:
 	common_words_path = '/home/jonathan/Documents/WordEmbedding/Arxiv/Data/20k.txt'
-	text_data_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/Text/knowledgeMatters.txt"
+	text_data_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/Text/herdedGibbsSampling.txt"
 
 
 #Get embeddings
@@ -55,34 +55,33 @@ else:
     stop_words = [unicode(word) for word in stop_words]
 
 arxivReader = ArxivReader()
-#tags = ['NN','NNS', 'JJ', 'RB', 'VBP', 'VB']
-tags=['NN','NNS']
+tags = ['NN','NNS', 'JJ', 'RB', 'VBP', 'VB']
+#tags=['NN','NNS']
 #tags = ['NN','NNS', 'VBP', 'VB']
 text_data = arxivReader.readAbstractFileAndFilterByTags(text_data_path)
 
 #print(text_data)
-print(len(text_data), ' paragraphs\n')
 results = []
 for i in range(len(text_data)):
 	message = text_data[i]
-
 	#Noun phrase chunking
 	grammar = r"""
-              NP: {<DT|PP\$>?<JJ>*<NN>+}   # chunk determiner/possessive, adjectives and noun
-			  {<NN|NNS><IN><NN|NNS>}
-			  {<NNS>+}
-              {<NNP>+}                # chunk sequences of proper nouns
+              NP: {<PP\$>?<JJ>*<NN|NNS|NNP>+<VBZ>*<JJ><NN|NNS>+}   # chunk determiner/possessive, adjectives and noun
+			  {<JJ>*<NN|NNS>*<NN|NNS><IN><JJ>*<NN|NNS>+}
+			  {<JJ><CC><JJ><NN|NNS>}
+			  {<JJ>*<NN|NNS>+}
+			  {<NN|NNS><IN><DT><NN|NNS>}
     """
 
 	cp = nltk.RegexpParser(grammar)
 	chunks = [cp.parse(sentence) for sentence in message]
 
+    # Filter out common words and words without the specified PoS tag
 	message = [[ word[0] for word in sentence if word[1] in tags] for sentence in message]
-
 	#Map all words to their embeddings
 	message = [[embeddings.get(word) for word in sentences if word not in stop_words and embeddings.get(word) is not None] for sentences in message]
 	#Check for empty sentences (after common and stop word removal)
-	message = [sen for sen in message if len(sen) > 3]
+	#message = [sen for sen in message if len(sen) > 3]
 
 	lip = AbstractLIP(message, embObj.embeddingSize(), lambda_, 'cosine')
 	lip.computeBoundary()
@@ -99,7 +98,7 @@ def traverseTree(tree, word):
 			if subtree._label == 'NP':
 				for leave in subtree.leaves():
 				    if word == leave[0]:
-					    return [l[0] for l in subtree.leaves()]
+						return [l[0] for l in subtree.leaves()]
 			else:
 				traverseTree(subtree)
 

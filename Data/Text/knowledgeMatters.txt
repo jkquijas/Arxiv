@@ -9,10 +9,10 @@ shapes belong to the same category and otherwise the class is 0. In terms of gen
 black-box machine learning algorithms could not perform better than chance on this task.
 Standard deep supervised neural networks also failed to generalize. However, using a particular
 structure and guiding the learner by providing intermediate targets in the form of intermediate
-concepts (the presence of each object) allowed us to solve the task eciently. We obtained much
+concepts (the presence of each object) allowed us to solve the task efficiently. We obtained much
 better than chance, but imperfect results by exploring different architectures and optimization
-variants. This observation might be an indication of optimization diculty when the neural
-network trained without hints on this task. We hypothesize that the learning diculty is due
+variants. This observation might be an indication of optimization difficulty when the neural
+network trained without hints on this task. We hypothesize that the learning difficulty is due
 to the composition of two highly non-linear tasks. Our findings are also consistent with the
 hypotheses on cultural learning inspired by the observations of training of neural networks
 sometimes getting stuck, even though good solutions exist, both in terms of training and

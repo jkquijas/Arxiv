@@ -1,0 +1,8 @@
+Matrix approximation is a common tool in recommendation systems, text mining, and
+computer vision. A prevalent assumption in constructing matrix approximations is that
+the partially observed matrix is low-rank. In this paper, we propose, analyze, and experiment
+with two procedures, one parallel and the other global, for constructing local matrix
+approximations. The two approaches approximate the observed matrix as a weighted sum
+of low-rank matrices. These matrices are limited to a local region of the observed matrix.
+We analyze the accuracy of the proposed local low-rank modeling. Our experiments show
+improvements in prediction accuracy over classical approaches for recommendation tasks.

@@ -6,3 +6,6 @@ approximations. The two approaches approximate the observed matrix as a weighted
 of low-rank matrices. These matrices are limited to a local region of the observed matrix.
 We analyze the accuracy of the proposed local low-rank modeling. Our experiments show
 improvements in prediction accuracy over classical approaches for recommendation tasks.
+
+Matrix approximation, non-parametric methods, kernel smoothing, collaborative
+Filtering, recommender systems

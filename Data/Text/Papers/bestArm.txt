@@ -6,3 +6,6 @@ In the specific case of two armed-bandits, we derive refined lower bounds in bot
 These results show in particular that the complexity of the fixed-budget setting may be smaller than the complexity of the fixed-confidence setting, contradicting the familiar behavior observed when testing fully specified alternatives.
 In addition, we also provide improved sequential stopping rules that have guaranteed error probabilities and shorter average running times.
 The proofs rely on two technical results that are of independent interest : a deviation lemma for self-normalized sums (Lemma 7) and a novel change of measure inequality for bandit models (Lemma 1).
+
+multi-armed bandit, best-arm identification, pure exploration, information-theoretic
+divergences, sequential testing

@@ -9,3 +9,5 @@ learners. By randomly rotating the feature space prior to inducing the base lear
 achieve favorable aggregate predictions on standard data sets compared to state of the art
 ensemble methods, most notably for tree-based ensembles, which are particularly sensitive
 to rotation.
+
+feature rotation, ensemble diversity, smooth decision boundary

@@ -104,9 +104,18 @@ class ArxivReader(ArxivObj):
         text_data = [re.sub(r'[^\x00-\x7F]+','', sentence) for sentence in text_data]
         text_data = [re.sub("[^a-zA-Z0-9\-,]", " ", sentence).lower() for sentence in text_data]
         text_data = [nltk.pos_tag(nltk.word_tokenize(sentence)) for sentence in text_data]
-
-
         return [text_data]
+
+    def readAbstractFileAndKeywords(self, filePath):
+        raw_data = open(filePath, 'r').read()
+        text_list = raw_data.split("\n\n")
+        text_data = text_list[0]
+        keywords = text_list[1]
+        text_data = nltk.tokenize.sent_tokenize(raw_data)
+        text_data = [re.sub(r'[^\x00-\x7F]+','', sentence) for sentence in text_data]
+        text_data = [re.sub("[^a-zA-Z0-9\-,]", " ", sentence).lower() for sentence in text_data]
+        text_data = [nltk.pos_tag(nltk.word_tokenize(sentence)) for sentence in text_data]
+        return [text_data, keywords]
 
 class ArxivWriter(ArxivObj):
     if(platform.system() == 'Windows'):

@@ -17,3 +17,6 @@ to the composition of two highly non-linear tasks. Our findings are also consist
 hypotheses on cultural learning inspired by the observations of training of neural networks
 sometimes getting stuck, even though good solutions exist, both in terms of training and
 generalization error.
+
+deep learning, neural networks, optimization, evolution of culture, curriculum
+learning, training with hints

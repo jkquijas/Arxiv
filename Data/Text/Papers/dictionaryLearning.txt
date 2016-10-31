@@ -16,3 +16,6 @@ for dictionary learning with approximation and sparsity guarantees. We include s
 numerical experiments confirming these theoretical results, and our theoretical framework
 provides new tools for assessing the behavior of manifold learning and dictionary learning
 procedures on a large class of interesting models.
+
+dictionary learning, multi-resolution analysis, manifold learning, robustness,
+sparsity

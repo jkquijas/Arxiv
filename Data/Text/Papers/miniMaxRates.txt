@@ -12,3 +12,5 @@ For d = O(logn), the rate is dimension free and equals where is the noise level.
 d is larger than clogn for some constant c > 0, the minimax rate increases with d and is of the order of
 (dlogn)1=4. We also discuss the computational aspects of the estimators and provide empirical evidence
 of their consistency on synthetic data. Finally, we show that our results extend to more general matching criteria.
+
+permutation estimation, minimax rate of separation, feature matching

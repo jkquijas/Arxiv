@@ -13,3 +13,5 @@ memory or mixing assumptions are made. When the number of clusters is unknown,
 stronger assumptions are provably necessary, but it is still possible to devise nonparametric
 algorithms that are consistent under very general conditions. The theoretical findings of
 this work are illustrated with experiments on both synthetic and real data.
+
+clustering, time series, ergodicity, unsupervised learning

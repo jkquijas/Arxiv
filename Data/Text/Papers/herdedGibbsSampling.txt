@@ -5,3 +5,5 @@ models with independent variables and for fully connected probabilistic graphica
 Herded Gibbs is shown to outperform Gibbs in the tasks of image denoising with MRFs
 and named entity recognition with CRFs. However, the convergence for herded Gibbs for
 sparsely connected probabilistic graphical models is still an open problem.
+
+Gibbs sampling, herding, deterministic sampling

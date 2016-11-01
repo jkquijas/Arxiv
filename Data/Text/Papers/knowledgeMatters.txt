@@ -18,5 +18,5 @@ hypotheses on cultural learning inspired by the observations of training of neur
 sometimes getting stuck, even though good solutions exist, both in terms of training and
 generalization error.
 
-deep learning, neural networks, optimization, evolution of culture, curriculum
+deep learning, neural networks, optimization, evolution culture, curriculum
 learning, training with hints

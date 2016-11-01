@@ -41,6 +41,7 @@ class EmbeddingsReader(object):
     #Return array with embedding vectors
     def valuesArray(self):
         if self.read_embs:
+            #return list(self.data.values())
             return np.array(list(self.data.values()))
         else:
             raise RuntimeError('Embeddings must be read first!')

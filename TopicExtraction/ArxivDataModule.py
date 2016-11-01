@@ -115,6 +115,12 @@ class ArxivReader(ArxivObj):
         text_data = [re.sub(r'[^\x00-\x7F]+','', sentence) for sentence in text_data]
         text_data = [re.sub("[^a-zA-Z0-9\-,]", " ", sentence).lower() for sentence in text_data]
         text_data = [nltk.pos_tag(nltk.word_tokenize(sentence)) for sentence in text_data]
+
+        keywords = re.sub(r'[^\x00-\x7F]+','', keywords)
+        keywords = re.sub("[^a-zA-Z0-9\-,]", " ", keywords).lower()
+        keywords = keywords.split(',')
+        keywords = [k.split() for k in keywords]
+
         return [text_data, keywords]
 
 class ArxivWriter(ArxivObj):

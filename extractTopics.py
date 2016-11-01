@@ -26,7 +26,7 @@ if(platform.system() == 'Windows'):
 
 else:
 	common_words_path = '/home/jonathan/Documents/WordEmbedding/Arxiv/Data/20k.txt'
-	text_data_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/Text/herdedGibbsSampling.txt"
+	text_data_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/Text/Papers/herdedGibbsSampling.txt"
 
 
 #Get embeddings
@@ -63,6 +63,7 @@ text_data = arxivReader.readAbstractFileAndFilterByTags(text_data_path)
 #print(text_data)
 results = []
 for i in range(len(text_data)):
+	print "i = ", i
 	message = text_data[i]
 	#Noun phrase chunking
 	grammar = r"""

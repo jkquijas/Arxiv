@@ -96,6 +96,7 @@ class LIP(object):
         results = []
         for k in range(self.n_sen):
             emb = (self.S[k][self.chosen_idxs[k]][1])
+            #idx = [np.array_equal(emb,x) for x in values_array].index(True)
             idx = np.where(values_array == emb)[0][0]
             results += [keys_array[idx]]
         return results

@@ -96,6 +96,14 @@ grammar = r"""
 """
 cp = nltk.RegexpParser(grammar)
 
+#
+# RAKE object
+#
+min_num_chars = 3
+n_gram = 3
+min_occur = 1
+rake_object = rake.Rake("/home/jonathan/Documents/WordEmbedding/Arxiv/Data/500common.txt", min_num_chars, n_gram, min_occur)
+
 #For each paper
 file_list = listdir(papers_path)
 for i, file_name in enumerate(file_list):
@@ -146,7 +154,6 @@ for i, file_name in enumerate(file_list):
 	print("len(keywords) = ", len(keywords))
 	print("Recall for paper", file_name, ": ", recall)
     #keywords = [SnowballStemmer("english").stem(item) for sublist in keywords for item in sublist]
-
 
 end = time.time()
 print(end-start)

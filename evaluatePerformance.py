@@ -8,8 +8,10 @@ from TopicExtraction.EmbeddingModule import EmbeddingsReader
 from TopicExtraction.ArxivDataModule import ArxivReader
 from TopicExtraction.ArxivDataModule import ArxivManager
 
-from RAKE.RAKE_tutorial import rake
-import lda
+from RAKE_tutorial import rake
+
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.decomposition import NMF, LatentDirichletAllocation
 
 import numpy as np
 import time
@@ -38,6 +40,13 @@ def traverseTree(tree, word):
                     else:
                         traverseTree(subtree, word)
 
+def print_top_words(model, feature_names, n_top_words):
+    for topic_idx, topic in enumerate(model.components_):
+        print("Topic #%d:" % topic_idx)
+        print(" ".join([feature_names[i]
+                        for i in topic.argsort()[:-n_top_words - 1:-1]]))
+    print()
+
 def empty(seq):
     try:
         return all(map(empty, seq))
@@ -54,10 +63,12 @@ start = time.time()
 
 if(platform.system() == 'Windows'):
     common_words_path = 'C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\20k.txt'
+    rake_common_path = "C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\500common.txt"
     papers_path = "C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\ACMSerializedCoPPubs\\serializedPubsCS.txt"
 else:
     common_words_path = '/home/jonathan/Documents/WordEmbedding/Arxiv/Data/20k.txt'
     papers_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/ACMSerializedCoPPubs/serializedPubsCS.txt"
+    rake_common_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/500common.txt"
 
 #
 # Get embeddings
@@ -104,41 +115,87 @@ grammar = r"""
 cp = nltk.RegexpParser(grammar)
 
 #For each paper
-data = raw_data = open(papers_path, 'r').read()
-data = unserialize(data)
+if(platform.system() == 'Windows'):
+    data = raw_data = open(papers_path, 'rb').read()
+    data = unserialize(data)
+    key_title = b'pubTitle'
+    key_concept = b'pubConcepts'
+    key_abstract = b'pubAbstract'
+else:
+    data = raw_data = open(papers_path, 'r').read()
+    data = unserialize(data)
+    key_title = 'pubTitle'
+    key_concept = 'pubConcepts'
+    key_abstract = 'pubAbstract'
+
 numPapers = len(data)
 
 min_num_chars = 3
 max_n_gram_size = 5
 min_occur = 1
-rake_object = rake.Rake("/home/jonathan/Documents/WordEmbedding/Arxiv/Data/500common.txt", min_num_chars, max_n_gram_size, min_occur)
+rake_object = rake.Rake(rake_common_path, min_num_chars, max_n_gram_size, min_occur)
 
 resultsFile = open('results.txt', 'w')
 
 
 for i in range(numPapers):
-    if len(data[i]['pubConcepts']) == 0:
+    if len(data[i][key_concept]) == 0:
         continue
 
-    file_name = data[i]['pubTitle']
+    file_name = data[i][key_title]
     #Read text and keywords
-    abstract = data[i]['pubAbstract']
+    abstract = data[i][key_abstract]
+    if(platform.system()=='Windows'):
+        abstract = abstract.decode()
+
+    keywords = [str(data[i][key_concept][j][0]) for j in range(len(data[i][key_concept]))]
+    keywords = [re.sub(r'[^\x00-\x7F]+','', k) for k in keywords]
+    keywords = [re.sub("[^a-zA-Z0-9\-,]", " ", k).lower() for k in keywords]
+    keywords = [k.split() for k in keywords]
+
+    #
+    # lda
+    #
+    n = len(keywords)
+    n_features = 1000
+    n_topics = n
+    n_top_words = 20
+
+    #CountVectorizer
+    tf_vectorizer = TfidfVectorizer(max_df=0.95, min_df=2,
+                                max_features=n_features,
+                                stop_words='english')
+    tf = tf_vectorizer.fit_transform(nltk.sent_tokenize(str(abstract)))
+    lda = LatentDirichletAllocation(n_topics=n_topics, max_iter=10,
+                                learning_method='online',
+                                learning_offset=50.,
+                                random_state=0)
+    lda.fit(tf)
+    print("\nTopics in LDA model:")
+    tf_feature_names = tf_vectorizer.get_feature_names()
+    print_top_words(lda, tf_feature_names, n_top_words)
 
     abstract = nltk.tokenize.sent_tokenize(abstract)
     abstract = [re.sub(r'[^\x00-\x7F]+','', sentence) for sentence in abstract]
     abstract = [re.sub("[^a-zA-Z0-9\-,]", " ", sentence).lower() for sentence in abstract]
     abstract = [nltk.pos_tag(nltk.word_tokenize(sentence)) for sentence in abstract]
 
-    keywords = [data[i]['pubConcepts'][j][0] for j in range(len(data[i]['pubConcepts']))]
-    keywords = [re.sub(r'[^\x00-\x7F]+','', k) for k in keywords]
-    keywords = [re.sub("[^a-zA-Z0-9\-,]", " ", k).lower() for k in keywords]
-    keywords = [k.split() for k in keywords]
 
+
+
+
+
+    #
+    #Rake
+    #
     rakeOutput = rake_object.run(str(abstract))
     #print "Rake Keywords:", rakeOutput
+
     rakeOutput = [(rakeOutput[j][0]).split() for j in range(len(abstract))]
     rakeOutput = [str(SnowballStemmer("english").stem(item)) for sublist in rakeOutput for item in sublist]
     #pprint.pprint(rakeOutput)
+
+
 
 
     #Create chunks using our grammar
@@ -172,7 +229,7 @@ for i in range(numPapers):
     output = [str(SnowballStemmer("english").stem(item)) for sublist in output for item in sublist]
     recall = 0.0
     rakeRecall = 0.0
-    n = len(keywords)
+
     for ki, k in enumerate(keywords):
         #print("keyword ", str(ki+1),"/",n)
         k = [SnowballStemmer("english").stem(item) for item in k]
@@ -195,7 +252,7 @@ for i in range(numPapers):
     print("Recall for paper", file_name, ": ", recall)
     print("Recall RAKE", file_name, ": ", rakeRecall)
 
-    resultsFile.write(str(recall)+" "+str(rakeRecall)+"\n")
+    resultsFile.write(str(recall)+","+str(rakeRecall)+"\n")
 
     #keywords = [SnowballStemmer("english").stem(item) for sublist in keywords for item in sublist]
 

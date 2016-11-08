@@ -5,6 +5,7 @@ from scipy.spatial.distance import cdist
 
 from operator import itemgetter
 import itertools
+import nltk
 
 from functools import reduce # Valid in Python 2.6+, required in Python 3 6
 import operator
@@ -199,9 +200,51 @@ class AbstractLIP(LIP):
         self.chosen_idxs = [0 for self.s in self.S]
         self.keywordMap = {}
         for i, s in enumerate(self.S):
-            while(np.array_str(s[self.chosen_idxs[i]][1]) in self.keywordMap):
+            #Avoid repeated words
+            while(np.array_str(s[self.chosen_idxs[i]][1]) in self.keywordMap and self.chosen_idxs[i] + 1 < len(s)):
                 self.chosen_idxs[i] =  self.chosen_idxs[i] + 1
             self.keywordMap[np.array_str(s[self.chosen_idxs[i]][1])] = True
+
+class ChunkTreeCSM(object):
+    def __init__(self, tree, embeddings, tags):
+        self.nps = []
+        #For each sentence
+        for t in tree:
+            sentence_nps = []
+            #For each subtree in the sentence
+            for subtree in t:
+                #If it is a NP, add to list
+                if type(subtree) == nltk.tree.Tree:
+                    sentence_nps = sentence_nps + [subtree]
+            if sentence_nps:
+                self.nps = self.nps + [sentence_nps]
+
+        self.abstract = []
+        for sentence in self.nps:
+            result = [[[(embeddings.get(word[0]), word[1]) for word in np.leaves() if embeddings.get(word[0])
+                                              is not None and word[1] in tags] for np in sentence]]
+            self.abstract = self.abstract + result
+        self.abstract = [sentence for sentence in self.abstract if sentence]
+
+    def selectKeywords(self, tags, type):
+        results = []
+        #For each sentence
+        for i, sentence in enumerate(self.abstract):
+            #For each noun phrase in this sentence
+            avg_cos_sim_list = []
+            for noun_phrase in sentence:
+                np_emb = np.array([np_i[0] for np_i in noun_phrase])
+                mean_ = np.mean(np.sum(np.dot(np.array(np_emb), np.array(np_emb).transpose()), axis=0))
+                avg_cos_sim_list += [mean_]
+            #find np with minimal mean cosine similarity
+            if type == 'max':
+                cos_sim_np_idx = np.argmax(avg_cos_sim_list)
+            else:
+                cos_sim_np_idx = np.argmin(avg_cos_sim_list)
+            selected_np = self.nps[i][cos_sim_np_idx]
+            #Filter selected noun phrase to output only specified PoS
+            results += [[leave[0] for leave in selected_np.leaves() if leave[1] in tags]]
+        return results
 
 
 

@@ -206,8 +206,9 @@ class AbstractLIP(LIP):
             self.keywordMap[np.array_str(s[self.chosen_idxs[i]][1])] = True
 
 class ChunkTreeCSM(object):
-    def __init__(self, tree, embeddings, tags):
+    def __init__(self, tree, embeddings, tags, embedding_size=50):
         self.nps = []
+        self.zero_vec = np.zeros(embedding_size)
         #For each sentence
         for t in tree:
             sentence_nps = []
@@ -221,22 +222,27 @@ class ChunkTreeCSM(object):
 
         self.abstract = []
         for sentence in self.nps:
-            result = [[[(embeddings.get(word[0]), word[1]) for word in np.leaves() if embeddings.get(word[0])
-                                              is not None and word[1] in tags] for np in sentence]]
+            result = [[[(embeddings.get(word[0],self.zero_vec), word[1]) for word in n_p.leaves()] for n_p in sentence]]
+            #result = [[[(embeddings.get(word[0]), word[1]) for word in n_p.leaves() if embeddings.get(word[0])
+            #                                  is not None and word[1] in tags] for n_p in sentence]]
             self.abstract = self.abstract + result
+        #self.abstract = [sentence for sentence in self.abstract if sentence]
+        self.abstract = [[n_p for n_p in sentence if n_p]for sentence in self.abstract]
         self.abstract = [sentence for sentence in self.abstract if sentence]
 
     def selectKeywords(self, tags, type):
         results = []
         #For each sentence
         for i, sentence in enumerate(self.abstract):
+            #print sentence
             #For each noun phrase in this sentence
             avg_cos_sim_list = []
             for noun_phrase in sentence:
                 np_emb = np.array([np_i[0] for np_i in noun_phrase])
-                mean_ = np.mean(np.sum(np.dot(np.array(np_emb), np.array(np_emb).transpose()), axis=0))
+                mean_ = np.mean(np.mean(np.dot(np.array(np_emb), np.array(np_emb).transpose()), axis=0))
+                #mean_ = np.mean(np.sum(np.dot(np.array(np_emb), np.array(np_emb).transpose()), axis=0))
                 avg_cos_sim_list += [mean_]
-            #find np with minimal mean cosine similarity
+            #find np with optimal mean within-phrase cosine similarity
             if type == 'max':
                 cos_sim_np_idx = np.argmax(avg_cos_sim_list)
             else:

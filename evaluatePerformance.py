@@ -75,9 +75,12 @@ def computePerformance(output, true_keywords_map, true_keywords_lengths):
 
 
     for k in keyword_counter.keys():
-        precision = keyword_counter[k]/len(output[keyword_index_mapping[k]])
-        recall = keyword_counter[k]/true_keywords_lengths[k]
-        fmeasure = 2*((precision*recall)/(precision+recall))
+        precision = float(keyword_counter[k])/len(output[keyword_index_mapping[k]])
+        recall = float(keyword_counter[k])/true_keywords_lengths[k]
+        if precision + recall == 0:
+            fmeasure = 0.0
+        else:
+            fmeasure = 2*((precision*recall)/(precision+recall))
 
         avgPrecision += precision
         avgRecall += recall
@@ -144,10 +147,12 @@ if(platform.system() == 'Windows'):
     common_words_path = 'C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\20k.txt'
     rake_common_path = "C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\500common.txt"
     papers_path = "C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\ACMSerializedCoPPubs\\serializedPubsCS.txt"
+    tagger_path = 'C:\\Users\\Jona Q\\Documents\\GitHub\\Arxiv\\chunker.pickle'
 else:
     common_words_path = '/home/jonathan/Documents/WordEmbedding/Arxiv/Data/20k.txt'
     papers_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/ACMSerializedCoPPubs/serializedPubsCS.txt"
     rake_common_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/500common.txt"
+    tagger_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/chunker2.pickle"
 
 #
 # Get embeddings
@@ -161,7 +166,7 @@ keys_array = embObj.keysArray()
 #
 # Initialize our file reader object
 #
-arxivReader = ArxivReader()
+#arxivReader = ArxivReader()
 
 #
 # Create stopwords set
@@ -210,17 +215,19 @@ else:
 
 numPapers = len(data)
 
-min_num_chars = 3
+"""min_num_chars = 3
 max_n_gram_size = 3
 min_occur = 1
-rake_object = rake.Rake(rake_common_path, min_num_chars, max_n_gram_size, min_occur)
+rake_object = rake.Rake(rake_common_path, min_num_chars, max_n_gram_size, min_occur)"""
 
-recallFile = open('recall_results.txt', 'w')
-precisionFile = open('precision_results.txt', 'w')
-fmeasureFile = open('fmeasure_results.txt', 'w')
+recallFile = open('csm_recall_results.txt', 'w')
+precisionFile = open('csm_precision_results.txt', 'w')
+fmeasureFile = open('csm_fmeasure_results.txt', 'w')
 
 
 for i in range(numPapers):
+    if(i % 100 == 0):
+        print(i)
     if len(data[i][key_concept]) == 0:
         continue
 
@@ -236,9 +243,9 @@ for i in range(numPapers):
     #
     # RAKE
     #
-    rakeOutput = rake_object.run(abstract)
+    """rakeOutput = rake_object.run(abstract)
     rakeOutput = [(rakeOutput[j][0]).split() for j in range(len(nltk.tokenize.sent_tokenize(abstract)))]
-    rakeOutput = [[str(SnowballStemmer("english").stem(item)) for item in sublist] for sublist in rakeOutput]
+    rakeOutput = [[str(SnowballStemmer("english").stem(item)) for item in sublist] for sublist in rakeOutput]"""
 
 
     if platform.system() == 'Windows':
@@ -266,7 +273,7 @@ for i in range(numPapers):
     #
     # lda
     #
-    n = len(keywords)
+    """n = len(keywords)
     n_features = 1000
     n_topics = len(abstract)
     n_top_words = 3
@@ -294,22 +301,31 @@ for i in range(numPapers):
 
     nmfOutput = get_topics(nmf, tf_feature_names, n_top_words)
     nmfOutput = [(nmfOutput[j]).split() for j in range(len(nmfOutput))]
-    nmfOutput = [[str(SnowballStemmer("english").stem(item)) for item in sublist] for sublist in nmfOutput]
+    nmfOutput = [[str(SnowballStemmer("english").stem(item)) for item in sublist] for sublist in nmfOutput]"""
 
 
 
     abstract = [re.sub(r'[^\x00-\x7F]+','', sentence) for sentence in abstract]
     abstract = [re.sub("[^a-zA-Z0-9\-,]", " ", sentence).lower() for sentence in abstract]
-    
+
     abstract = [nltk.pos_tag(nltk.word_tokenize(sentence)) for sentence in abstract]
 
     #Create chunks using our grammar
     #chunks = [cp.parse(sentence) for sentence in abstract]
-    with open('C:\\Users\\Jona Q\\Documents\\GitHub\\Arxiv\\chunker.pickle', 'rb') as handle:
+    with open(tagger_path, 'rb') as handle:
         chunker = pickle.load(handle)
     chunks = [chunker.parse(sentence) for sentence in abstract]
 
-    # Filter out common words and words without the specified PoS tag
+    tree_csm = ChunkTreeCSM(chunks, embeddings, tags)
+
+    minCsmOutput = tree_csm.selectKeywords(tag_filter, 'min')
+    minCsmOutput = [[str(SnowballStemmer("english").stem(item)) for item in sublist if item not in stop_words]
+                    for sublist in minCsmOutput]
+    maxCsmOutput = tree_csm.selectKeywords(tags, 'max')
+    maxCsmOutput = [[str(SnowballStemmer("english").stem(item)) for item in sublist if item not in stop_words]
+                    for sublist in maxCsmOutput]
+
+    """# Filter out common words and words without the specified PoS tag
     abstract = [[ word[0] for word in sentence if word[1] in tags] for sentence in abstract]
     #Map all words to their embeddings
     abstract = [[embeddings.get(word) for word in sentences if word not in stop_words and embeddings.get(word) is not None] for sentences in abstract]
@@ -345,11 +361,14 @@ for i in range(numPapers):
     [precision, recall, fmeasure] = computePerformance(output, true_keywords_map, true_keywords_lengths)
     [rakePrecision, rakeRecall, rakeFmeasure] = computePerformance(rakeOutput, true_keywords_map, true_keywords_lengths)
     [ldaPrecision, ldaRecall, ldaFmeasure] = computePerformance(ldaOutput, true_keywords_map, true_keywords_lengths)
-    [nmfPrecision, nmfRecall, nmfFmeasure] = computePerformance(nmfOutput, true_keywords_map, true_keywords_lengths)
+    [nmfPrecision, nmfRecall, nmfFmeasure] = computePerformance(nmfOutput, true_keywords_map, true_keywords_lengths)"""
     [minCsmPrecision, minCsmRecall, minCsmFmeasure] = computePerformance(minCsmOutput, true_keywords_map, true_keywords_lengths)
     [maxCsmPrecision, maxCsmRecall, maxCsmFmeasure] = computePerformance(maxCsmOutput, true_keywords_map, true_keywords_lengths)
+    recallFile.write(str(minCsmRecall)+","+str(maxCsmRecall)+"\n")
+    precisionFile.write(str(minCsmPrecision)+","+str(maxCsmPrecision)+"\n")
+    fmeasureFile.write(str(minCsmFmeasure)+","+str(maxCsmFmeasure)+"\n")
 
-    print(file_name)
+    """print(file_name)
     print('keywords:')
     pprint.pprint(keywords)
     print('LIP output')
@@ -375,7 +394,7 @@ for i in range(numPapers):
 
     recallFile.write(str(recall)+","+str(rakeRecall)+","+str(ldaRecall)+","+str(nmfRecall)+","+str(minCsmRecall)+","+str(maxCsmRecall)+"\n")
     precisionFile.write(str(precision)+","+str(rakePrecision)+","+str(ldaPrecision)+","+str(nmfPrecision)+","+str(minCsmPrecision)+","+str(maxCsmPrecision)+"\n")
-    fmeasureFile.write(str(fmeasure)+","+str(rakeFmeasure)+","+str(ldaFmeasure)+","+str(nmfFmeasure)+","+str(minCsmFmeasure)+","+str(maxCsmFmeasure)+"\n")
+    fmeasureFile.write(str(fmeasure)+","+str(rakeFmeasure)+","+str(ldaFmeasure)+","+str(nmfFmeasure)+","+str(minCsmFmeasure)+","+str(maxCsmFmeasure)+"\n")"""
 
 
 recallFile.close()

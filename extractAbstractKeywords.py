@@ -66,9 +66,10 @@ def computePerformance(output, true_keywords_map, true_keywords_lengths):
 
 
     for k in keyword_counter.keys():
-        precision = keyword_counter[k]/len(output[keyword_index_mapping[k]])
-        recall = keyword_counter[k]/true_keywords_lengths[k]
+        precision = float(keyword_counter[k])/float(len(output[keyword_index_mapping[k]]))
+        recall = float(keyword_counter[k])/float(true_keywords_lengths[k])
         fmeasure = 2*((precision*recall)/(precision+recall))
+        print precision, recall, fmeasure
 
         avgPrecision += precision
         avgRecall += recall
@@ -132,10 +133,14 @@ if(platform.system() == 'Windows'):
     common_words_path = 'C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\20k.txt'
     rake_common_path = "C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\500common.txt"
     papers_path = "C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\ACMSerializedCoPPubs\\serializedPubsCS.txt"
+    tagger_path = 'C:\\Users\\Jona Q\\Documents\\GitHub\\Arxiv\\chunker.pickle'
 else:
     common_words_path = '/home/jonathan/Documents/WordEmbedding/Arxiv/Data/20k.txt'
     papers_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/ACMSerializedCoPPubs/serializedPubsCS.txt"
     rake_common_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/500common.txt"
+    tagger_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/chunker2.pickle"
+
+
 
 #
 # Get embeddings
@@ -226,12 +231,12 @@ for i in range(numPapers):
 
     abstract = [nltk.pos_tag(nltk.word_tokenize(sentence)) for sentence in abstract]
 
-    with open('C:\\Users\\Jona Q\\Documents\\GitHub\\Arxiv\\chunker.pickle', 'rb') as handle:
+    with open(tagger_path, 'rb') as handle:
         chunker = pickle.load(handle)
     chunks = [chunker.parse(sentence) for sentence in abstract]
 
     tree_csm = ChunkTreeCSM(chunks, embeddings, tags)
-    maxCsmOutput = tree_csm.selectKeywords(tags, 'max')
+    maxCsmOutput = tree_csm.selectKeywords(tags, 'min')
     print("maxCsmOutput")
     pprint.pprint(maxCsmOutput)
     maxCsmOutput = [[str(SnowballStemmer("english").stem(item)) for item in sublist if item not in stop_words]
@@ -245,11 +250,11 @@ for i in range(numPapers):
     print('Min CSM output')
     pprint.pprint(minCsmOutput)
     print('Max CSM output')
-    pprint.pprint(maxCsmOutput)
+    pprint.pprint(maxCsmOutput)"""
 
 
-    print("Max-CSM: recall = ", maxCsmRecall, ", precision = ", maxCsmPrecision, ", f-measure = ", maxCsmFmeasure)"""
-    wait = input("PRESS ENTER TO CONTINUE.")
+    print("Max-CSM: recall = ", maxCsmRecall, ", precision = ", maxCsmPrecision, ", f-measure = ", maxCsmFmeasure)
+    wait = raw_input("PRESS ENTER TO CONTINUE.")
 
     print('\n')
 

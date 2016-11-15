@@ -15,6 +15,7 @@ import nltk
 from nltk.stem.snowball import SnowballStemmer
 import re
 from HotTea.HotTea import Extractor
+from HotTea.HotTea import FIPExtractor
 
 
 import pprint
@@ -68,7 +69,7 @@ start = time.time()
 if(platform.system() == 'Windows'):
     common_words_path = 'C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\20k.txt'
     rake_common_path = "C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\500common.txt"
-    papers_path = "C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\PDF\\Text\\asynchronousRL.txt"
+    papers_path = "C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\PDF\\Text\\atari.txt"
     tagger_path = 'C:\\Users\\Jona Q\\Documents\\GitHub\\Arxiv\\chunker.pickle'
 else:
     common_words_path = '/home/jonathan/Documents/WordEmbedding/Arxiv/Data/20k.txt'
@@ -132,9 +133,11 @@ for i, section in enumerate(chunks):
     results += [maxCsmOutput]
 pprint.pprint(results)
 
-extractor = Extractor(results)
+"""extractor = Extractor(results)
 extractor.createTopicHeap()
-extractor.printTopics()
+extractor.printTopics()"""
+extractor = FIPExtractor(results, embeddings, embedding_size)
+extractor.buldTopicStructure()
 
 end = time.time()
 print("Finished after ", end-start, "seconds")

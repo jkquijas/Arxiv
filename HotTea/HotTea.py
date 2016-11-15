@@ -1,11 +1,7 @@
 import heapq
 import math
+import numpy as np
 
-def empty(seq):
-    try:
-        return all(map(empty, seq))
-    except TypeError:
-        return False
 
 class Extractor(object):
     def __init__(self, data):
@@ -62,7 +58,8 @@ class Extractor(object):
 
 
 class FIPExtractor(object):
-    def __init__(self, data, embeddings, embedding_size = 50):
+    def __init__(self, data, embeddings, embedding_size = 50, threshold = .5):
+        self.threshold = threshold
         self.data = data
         self.zero_vec = np.zeros(embedding_size)
         self.embeddings_data = [[]]
@@ -70,3 +67,22 @@ class FIPExtractor(object):
             #Map each keyword to its section of occurrance
             for j, keywords in enumerate(section):
                 self.embeddings_data += [[embeddings.get(word,self.zero_vec) for word in keywords]]
+
+    def buldTopicStructure(self):
+        n_sections = len(self.data)
+        #Bottom up computing of topic relevance
+        for i in range(n_sections-1, 0, -1):
+            x = np.array(self.embeddings_data[i])
+            y = np.array(self.embeddings_data[i-1])
+            x_shape = x.shape
+            y_shape = y.shape
+            if x_shape[0] == 0 or y_shape[0] == 0:
+                continue
+            R = np.dot(x, y.transpose())
+            [r,c] = R.shape
+
+
+            for ii in range(r):
+                for jj in range(c):
+                    if abs(R[ii][jj]) >= self.threshold:
+                        pass

@@ -69,7 +69,6 @@ def computePerformance(output, true_keywords_map, true_keywords_lengths):
         precision = float(keyword_counter[k])/float(len(output[keyword_index_mapping[k]]))
         recall = float(keyword_counter[k])/float(true_keywords_lengths[k])
         fmeasure = 2*((precision*recall)/(precision+recall))
-        print precision, recall, fmeasure
 
         avgPrecision += precision
         avgRecall += recall
@@ -254,7 +253,10 @@ for i in range(numPapers):
 
 
     print("Max-CSM: recall = ", maxCsmRecall, ", precision = ", maxCsmPrecision, ", f-measure = ", maxCsmFmeasure)
-    wait = raw_input("PRESS ENTER TO CONTINUE.")
+    if platform.system() == 'Windows':
+        wait = input("PRESS ENTER TO CONTINUE.")
+    else:
+        wait = raw_input("PRESS ENTER TO CONTINUE.")
 
     print('\n')
 

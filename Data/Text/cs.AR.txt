@@ -1,0 +1,106 @@
+<summary>  In computer architecture, near-data processing (NDP) refers to augmenting the
+memory or the storage with processing power so that it can process the data
+stored therein. By offloading the computational burden of CPU and saving the
+need for transferring raw data in its entirety, NDP exhibits a great potential
+for acceleration and power reduction. Despite this potential, specific research
+activities on NDP have witnessed only limited success until recently, often
+owing to performance mismatches between logic and memory process technologies
+that put a limit on the processing capability of memory. Recently, there have
+been two major changes in the game, igniting the resurgence of NDP with renewed
+interest. The first is the success of machine learning (ML), which often
+demands a great deal of computation for training, requiring frequent transfers
+of big data. The second is the advent of NAND flash-based solid-state drives
+(SSDs) containing multicore processors that can accommodate extra computation
+for data processing. Sparked by these application needs and technological
+support, we evaluate the potential of NDP for ML using a new SSD platform that
+allows us to simulate in-storage processing (ISP) of ML workloads. Our platform
+(named ISP-ML) is a full-fledged simulator of a realistic multi-channel SSD
+that can execute various ML algorithms using the data stored in the SSD. For
+thorough performance analysis and in-depth comparison with alternatives, we
+focus on a specific algorithm: stochastic gradient decent (SGD), which is the
+de facto standard for training differentiable learning machines including deep
+neural networks. We implement and compare three variants of SGD (synchronous,
+Downpour, and elastic averaging) using ISP-ML, exploiting the multiple NAND
+channels for parallelizing SGD. In addition, we compare the performance of ISP
+and that of conventional in-host processing.
+</summary><summary>  Hierarchical Temporal Memory (HTM) is a biomimetic machine learning algorithm
+imbibing the structural and algorithmic properties of the neocortex. Two main
+functional components of HTM that enable spatio-temporal processing are the
+spatial pooler and temporal memory. In this research, we explore a scalable
+hardware realization of the spatial pooler closely coupled with the
+mathematical formulation of spatial pooler. This class of neuromorphic
+algorithms are advantageous in solving a subset of the future engineering
+problems by extracting nonintuitive patterns in complex data. The proposed
+architecture, Non-volatile HTM (NVHTM), leverages large-scale solid state flash
+memory to realize a optimal memory organization, area and power envelope. A
+behavioral model of NVHTM is evaluated against the MNIST dataset, yielding
+91.98% classification accuracy. A full custom layout is developed to validate
+the design in a TSMC 180nm process. The area and power profile of the spatial
+pooler are 30.538mm2 and 64.394mW, respectively. This design is a
+proof-of-concept that storage processing is a viable platform for large scale
+HTM network models.
+</summary><summary>  Convolutional neural networks (CNNs) have been widely employed in many
+applications such as image classification, video analysis and speech
+recognition. Being compute-intensive, CNN computations are mainly accelerated
+by GPUs with high power dissipations. Recently, studies were carried out
+exploiting FPGA as CNN accelerator because of its reconfigurability and energy
+efficiency advantage over GPU, especially when OpenCL-based high-level
+synthesis tools are now available providing fast verification and
+implementation flows. Previous OpenCL-based design only focused on creating a
+generic framework to identify performance-related hardware parameters, without
+utilizing FPGA's special capability of pipelining kernel functions to minimize
+memory bandwidth requirement. In this work, we propose an FPGA accelerator with
+a new architecture of deeply pipelined OpenCL kernels. Data reuse and task
+mapping techniques are also presented to improve design efficiency. The
+proposed schemes are verified by implementing two representative large-scale
+CNNs, AlexNet and VGG on Altera Stratix-V A7 FPGA. We have achieved a similar
+peak performance of 33.9 GOPS with a 34% resource reduction on DSP blocks
+compared to previous work. Our design is openly accessible and thus can be
+reused to explore new architectures for neural network accelerators.
+</summary><summary>  Basic Linear Algebra Subprograms (BLAS) play key role in high performance and
+scientific computing applications. Experimentally, yesteryear multicore and
+General Purpose Graphics Processing Units (GPGPUs) are capable of achieving up
+to 15 to 57% of the peak performance at 65W to 240W of power respectively in
+underlying platform for compute bound operations like Double/Single Precision
+General Matrix Multiplication (XGEMM) while for bandwidth bound operations like
+Single/Double precision Matrix-vector Multiplication (XGEMV) it is merely 5 to
+7% respectively. Achieving performance for BLAS requires moving away from
+conventional wisdom and evolving towards customized accelerator tailored for
+BLAS. In this paper, we present acceleration of Level-1 (vector operations),
+Level-2 (matrix-vector operations), and Level-3 (matrix-matrix operations) BLAS
+through algorithm architecture co-design on a Coarse-grained Reconfigurable
+Architecture (CGRA). We choose REDEFINE CGRA as a platform for our experiments
+since REDEFINE can be adapted to support domain of interest through tailor-made
+Custom Function Units (CFUs). For efficient sequential realization of BLAS, we
+present a design of a Processing Element (PE) that can achieve up-to 74% of the
+peak performance of the PE for DGEMM, 40% for DGEMV and 20% for DDOT. We
+attached this PE to the REDEFINE CGRA as a CFU and show the scalibilty of our
+solution. Finally, we show performance improvement of 3-140x in PE over
+commercially available Intel micro-architectures, ClearSpeed CSX700, FPGA, and
+Nvidia GPGPUs.
+</summary><summary>  Oblivious RAM (ORAM) is a cryptographic primitive which obfuscates the access
+patterns to a storage thereby preventing privacy leakage via access patterns.
+So far in the current literature only 'fully functional' ORAMs are widely
+studied which can protect, at a cost of considerable performance penalty,
+against the strong adversaries who have access to the memory address bus and
+can monitor all read and write operations. However, for weaker and more common
+adversaries who can learn the pattern of write accesses only (not reads), a
+fully functional ORAM turns out to be an overkill, since only write accesses
+need to be obfuscated. A simple 'write-only' ORAM is sufficient for such
+adversaries, and, more interestingly, is preferred as it can offer far more
+performance and energy efficiency than the fully functional ORAM.
+  In this work, we present Flat ORAM: a simplified and efficient write-only
+ORAM scheme for secure processors. To the best of our knowledge, this is the
+first ever proposal of a write-only ORAM tailored for secure processor
+architectures. The proposed Flat ORAM avoids almost all the redundancy incurred
+by a Path ORAM, while seamlessly adopting its basic structures (e.g. Position
+Map, Stash) as well as crucial optimizations proposed over the past decade.
+Specific to write-only ORAMs, we introduce a new ORAM structure called
+Occupancy Map (OccMap) which contains memory occupancy information vital for
+correctness and efficiency of our scheme. Our simulation results show that, on
+average, Flat ORAM only incurs a moderate slowdown of $2.9\times$ over the
+insecure DRAM for memory intensive benchmarks among Splash2 and $1.5\times$ for
+SPEC06. Compared to the closest existing write-only ORAM scheme called HIVE,
+Flat ORAM offers $\approx50\%$ performance gain and $45$-$65\%$ energy savings
+on average.
+</summary>

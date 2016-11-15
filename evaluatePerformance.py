@@ -318,14 +318,14 @@ for i in range(numPapers):
 
     tree_csm = ChunkTreeCSM(chunks, embeddings, tags)
 
-    minCsmOutput = tree_csm.selectKeywords(tag_filter, 'min')
+    minCsmOutput = tree_csm.selectKeywords(tags, 'min')
     minCsmOutput = [[str(SnowballStemmer("english").stem(item)) for item in sublist if item not in stop_words]
                     for sublist in minCsmOutput]
-    maxCsmOutput = tree_csm.selectKeywords(tags, 'max')
+    """maxCsmOutput = tree_csm.selectKeywords(tag_filter, 'max')
     maxCsmOutput = [[str(SnowballStemmer("english").stem(item)) for item in sublist if item not in stop_words]
                     for sublist in maxCsmOutput]
 
-    """# Filter out common words and words without the specified PoS tag
+    # Filter out common words and words without the specified PoS tag
     abstract = [[ word[0] for word in sentence if word[1] in tags] for sentence in abstract]
     #Map all words to their embeddings
     abstract = [[embeddings.get(word) for word in sentences if word not in stop_words and embeddings.get(word) is not None] for sentences in abstract]
@@ -363,10 +363,10 @@ for i in range(numPapers):
     [ldaPrecision, ldaRecall, ldaFmeasure] = computePerformance(ldaOutput, true_keywords_map, true_keywords_lengths)
     [nmfPrecision, nmfRecall, nmfFmeasure] = computePerformance(nmfOutput, true_keywords_map, true_keywords_lengths)"""
     [minCsmPrecision, minCsmRecall, minCsmFmeasure] = computePerformance(minCsmOutput, true_keywords_map, true_keywords_lengths)
-    [maxCsmPrecision, maxCsmRecall, maxCsmFmeasure] = computePerformance(maxCsmOutput, true_keywords_map, true_keywords_lengths)
-    recallFile.write(str(minCsmRecall)+","+str(maxCsmRecall)+"\n")
-    precisionFile.write(str(minCsmPrecision)+","+str(maxCsmPrecision)+"\n")
-    fmeasureFile.write(str(minCsmFmeasure)+","+str(maxCsmFmeasure)+"\n")
+    #[maxCsmPrecision, maxCsmRecall, maxCsmFmeasure] = computePerformance(maxCsmOutput, true_keywords_map, true_keywords_lengths)
+    recallFile.write(str(minCsmRecall)+"\n")
+    precisionFile.write(str(minCsmPrecision)+"\n")
+    fmeasureFile.write(str(minCsmFmeasure)+"\n")
 
     """print(file_name)
     print('keywords:')
@@ -390,11 +390,11 @@ for i in range(numPapers):
     print("NMF: recall = ", nmfRecall, ", precision = ", nmfPrecision, ", f-measure = ", nmfFmeasure)
     print("Min-CSM: recall = ", minCsmRecall, ", precision = ", minCsmPrecision, ", f-measure = ", minCsmFmeasure)
     print("Max-CSM: recall = ", maxCsmRecall, ", precision = ", maxCsmPrecision, ", f-measure = ", maxCsmFmeasure)
-    print('\n')
+    print('\n')"""
 
-    recallFile.write(str(recall)+","+str(rakeRecall)+","+str(ldaRecall)+","+str(nmfRecall)+","+str(minCsmRecall)+","+str(maxCsmRecall)+"\n")
-    precisionFile.write(str(precision)+","+str(rakePrecision)+","+str(ldaPrecision)+","+str(nmfPrecision)+","+str(minCsmPrecision)+","+str(maxCsmPrecision)+"\n")
-    fmeasureFile.write(str(fmeasure)+","+str(rakeFmeasure)+","+str(ldaFmeasure)+","+str(nmfFmeasure)+","+str(minCsmFmeasure)+","+str(maxCsmFmeasure)+"\n")"""
+    #recallFile.write(str(recall)+","+str(rakeRecall)+","+str(ldaRecall)+","+str(nmfRecall)+","+str(minCsmRecall)+","+str(maxCsmRecall)+"\n")
+    #precisionFile.write(str(precision)+","+str(rakePrecision)+","+str(ldaPrecision)+","+str(nmfPrecision)+","+str(minCsmPrecision)+","+str(maxCsmPrecision)+"\n")
+    #fmeasureFile.write(str(fmeasure)+","+str(rakeFmeasure)+","+str(ldaFmeasure)+","+str(nmfFmeasure)+","+str(minCsmFmeasure)+","+str(maxCsmFmeasure)+"\n")
 
 
 recallFile.close()

@@ -4,33 +4,31 @@ Programmed by Jonathan Quijas
 
 """
 import numpy as np
+import pickle
+import re
 import time
 from nltk.corpus import stopwords
+import nltk
 
-from TopicExtraction.KeywordExtractionModule import LIPGreedy
-from TopicExtraction.KeywordExtractionModule import LIP
 from TopicExtraction.EmbeddingModule import EmbeddingsReader
 from TopicExtraction.ArxivDataModule import ArxivReader
 from TopicExtraction.ArxivDataModule import ArxivManager
-from TopicExtraction.TopicExtractor import TopicExtractorCount
-from TopicExtraction.TopicExtractor import TopicExtractorKMeans
+from TopicExtraction.KeywordExtractionModule import ChunkTreeCSM
+from TopicExtraction.EmbeddingModule import EmbeddingsReader
+from Chunking.ChunkingModule import ConsecutiveNPChunker
+from Chunking import ChunkingModule
 
 import pprint
 import platform
 
 from collections import Counter
 
-lambda_ = .001
-
 #Clock in time
 start = time.time()
 if(platform.system() == 'Windows'):
-	common_words_path = 'C:\\Users\\Jona Q\\Documents\\Embeddings\\20k.txt'
-	text_data_path = "C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\Text\\voxelHashing.txt"
-
+    common_words_path = 'C:\\Users\\Jona Q\\Documents\\Embeddings\\20k.txt'
 else:
-	common_words_path = '/home/jonathan/Documents/WordEmbedding/20Newsgroups/Data/20k.txt'
-	text_data_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/Text/donQuixote.txt"
+    common_words_path = '/home/jonathan/Documents/WordEmbedding/20Newsgroups/Data/20k.txt'
 
 
 #Get embeddings
@@ -54,39 +52,38 @@ num_common_words = 600
 stop_words.update(common_words_list[0:num_common_words])
 #Convert to unicode
 if(platform.system() == 'Windows'):
-	stop_words = [word for word in stop_words]
+    stop_words = [word for word in stop_words]
+    tagger_path = tagger_path = 'C:\\Users\\Jona Q\\Documents\\GitHub\\Arxiv\\chunker.pickle'
 else:
     stop_words = [unicode(word) for word in stop_words]
+    tagger_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/chunker2.pickle"
+
+#
+# Set up noun phrase (NP) grammar
+#
+tags = ['NN','NNS', 'JJ', 'RB', 'VBP', 'VB']
+tag_filter = ['NN', 'NNS', 'JJ']
 
 arxivManager = ArxivManager()
 for c in arxivManager.categories():
-	raw_data = arxivManager.read(c)
-	for i, text_data in enumerate(raw_data):
-		print(text_data)
+    raw_data = arxivManager.read(c)
+    for i, abstract in enumerate(raw_data):
+        #Preprocess our raw text data
+        abstract = [re.sub(r'[^\x00-\x7F]+','', sentence) for sentence in abstract]
+        abstract = [re.sub("[^a-zA-Z0-9\-,.]", " ", sentence).lower() for sentence in abstract]
+        print(abstract)
+        abstract = [nltk.pos_tag(nltk.word_tokenize(sentence)) for sentence in abstract]
+        with open(tagger_path, 'rb') as handle:
+            chunker = pickle.load(handle)
+        chunks = [chunker.parse(sentence) for sentence in abstract]
 
-		results = []
-		for i in range(len(text_data)):
-			print('Paragraph ', i, '\n')
-			message = text_data[i]
+        tree_csm = ChunkTreeCSM(chunks, embeddings, tags)
+        maxCsmOutput = tree_csm.selectKeywords(tags, 'min')
+        print("maxCsmOutput")
+        pprint.pprint(maxCsmOutput)
+        if platform.system() == 'Windows':
+            wait = input("PRESS ENTER TO CONTINUE.")
+        else:
+            wait = raw_input("PRESS ENTER TO CONTINUE.")
 
-			message = embObj.mapWords(message)
-
-			lip = LIP(message, embObj.embeddingSize(), lambda_, 'cosine')
-			lip.computeBoundary()
-			lip.selectKeywords()
-			r = lip.getResults(values_array, keys_array)
-			results += r
-
-		results.sort()
-
-		#topic_extractor_type = 'count'
-		topic_extractor_type = 'kmeans'
-
-		if(topic_extractor_type == 'count'):
-		    topicExtractor = TopicExtractorCount(results, k)
-		    topicExtractor.extractTopics()
-		elif(topic_extractor_type == 'kmeans'):
-		    results = np.array([embeddings.get(word) for word in results])
-		    k = 5
-		    topicExtractor = TopicExtractorKMeans(results, k)
-		    topicExtractor.extractTopics(values_array, keys_array)
+        print('\n')

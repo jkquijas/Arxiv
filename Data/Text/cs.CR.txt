@@ -1,0 +1,56 @@
+<summary>  This paper presents ESCAPE, an informed moving target defense mechanism for
+cloud containers. ESCAPE models the interaction between attackers and their
+target containers as a "predator searching for a prey" search game. Live
+migration of Linux-containers (\textit{prey}) is used to avoid attacks
+(\textit{predator}) and failures. The entire process is guided by a novel
+host-based behavior-monitoring system that seamlessly monitors containers for
+indications of intrusions and attacks. To evaluate ESCAPE effectiveness, we
+simulated the attack avoidance process based on a mathematical model mimicking
+the prey-vs-predator search game. Simulation results show high container
+survival probabilities with minimal added overhead.
+</summary><summary>  Linux containers are gaining increasing traction in both individual and
+industrial use, and as these containers get integrated into mission-critical
+systems, real-time detection of malicious cyber attacks becomes a critical
+operational requirement. This paper introduces a real-time host-based intrusion
+detection system that can be used to passively detect malfeasance against
+applications within Linux containers running in a standalone or in a cloud
+multi-tenancy environment. The demonstrated intrusion detection system uses
+bags of system calls monitored from the host kernel for learning the behavior
+of an application running within a Linux container and determining anomalous
+container behavior. Performance of the approach using a database application
+was measured and results are discussed.
+</summary><summary>  In this paper, we present the results of using bags of system calls for
+learning the behavior of Linux containers for use in anomaly-detection based
+intrusion detection system. By using system calls of the containers monitored
+from the host kernel for anomaly detection, the system does not require any
+prior knowledge of the container nature, neither does it require altering the
+container or the host kernel.
+</summary><summary>  Linked Data technologies become increasingly important in many domains. Key
+factors for their breakthrough are security and trust, especially when sensible
+or personal data are involved. Classical means for access control lack
+granularity when parts of the Linked Data graph must be protected. The WebID,
+combining semantic web concepts with methods from certificate based
+authentication and authorization, seems promising to fulfill all requirements
+concerning security and trust in the semantic web. In the context of the
+PerSemID project, we challenged the WebID technology in a practical scenario
+coming from the domain of lifelong learning and student mobility. In our use
+case of study enrollment, we use WebIDs for authentication and to grant access
+to parts of the triple stores of the different stakeholders. Cross domain
+triple store interactions are used to exchange data between the involved
+parties. Our fully implemented PoC exemplifies an application built on Linked
+Data and WebID and allows us to judge the usability and security of WebID
+technology in a real world scenario.
+</summary><summary>  An increasing number of individuals are turning to Direct-To-Consumer (DTC)
+genetic testing to learn about their predisposition to diseases, traits, and/or
+ancestry. DTC companies like 23andme and Ancestry.com have started to offer
+popular and affordable ancestry and genealogy tests, with services allowing
+users to find unknown relatives and long-distant cousins. Naturally, access and
+possible dissemination of genetic data prompts serious privacy concerns, thus
+motivating the need to design efficient primitives supporting private genetic
+tests. In this paper, we present an effective protocol for privacy-preserving
+genetic relatedness test (PPGRT), enabling a cloud server to run relatedness
+tests on input an encrypted genetic database and a test facility's encrypted
+genetic sample. We reduce the test to a data matching problem and perform it,
+privately, using searchable encryption. Finally, a performance evaluation of
+hamming distance based PP-GRT attests to the practicality of our proposals.
+</summary>

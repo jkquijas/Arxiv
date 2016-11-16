@@ -249,7 +249,9 @@ class ChunkTreeCSM(object):
                 cos_sim_np_idx = np.argmin(avg_cos_sim_list)
             selected_np = self.nps[i][cos_sim_np_idx]
             #Filter selected noun phrase to output only specified PoS
-            results += [[leave[0] for leave in selected_np.leaves() if leave[1] in tags]]
+            r = [leave[0] for leave in selected_np.leaves() if leave[1] in tags]
+            if r:
+                results += [r]
         return results
 
 

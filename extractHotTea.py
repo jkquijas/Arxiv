@@ -20,34 +20,6 @@ from HotTea.HotTea import FIPExtractor
 
 import pprint
 import platform
-#from slate import PDF
-
-from io import StringIO
-from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
-from pdfminer.converter import TextConverter
-from pdfminer.layout import LAParams
-from pdfminer.pdfpage import PDFPage
-
-def convert(fname, pages=None):
-    if not pages:
-        pagenums = set()
-    else:
-        pagenums = set(pages)
-
-    output = StringIO()
-    manager = PDFResourceManager()
-    converter = TextConverter(manager, output, laparams=LAParams())
-    interpreter = PDFPageInterpreter(manager, converter)
-
-    infile = open(fname, 'rb')
-    for page in PDFPage.get_pages(infile, pagenums):
-        interpreter.process_page(page)
-    infile.close()
-    converter.close()
-    text = output.getvalue()
-    output.close
-    return text
-
 
 #Filter a noun phrase by tags
 #Returns a list of tokens in noun_phrase whose part of speech is found in tag list 'tags'
@@ -73,7 +45,7 @@ if(platform.system() == 'Windows'):
     tagger_path = 'C:\\Users\\Jona Q\\Documents\\GitHub\\Arxiv\\chunker.pickle'
 else:
     common_words_path = '/home/jonathan/Documents/WordEmbedding/Arxiv/Data/20k.txt'
-    papers_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/PDF/Text/atari.txt"
+    papers_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/PDF/Text/asynchronousRL.txt"
     rake_common_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/500common.txt"
     tagger_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/chunker2.pickle"
 
@@ -82,7 +54,7 @@ else:
 #
 # Get embeddings
 #
-embedding_size = 100
+embedding_size = 50
 embObj = EmbeddingsReader(embedding_size = embedding_size)
 normalize = True
 embeddings = embObj.readEmbeddings(normalize)
@@ -94,10 +66,10 @@ keys_array = embObj.keysArray()
 # Create stopwords set
 #
 stop_words = set(stopwords.words('english'))
-if(platform.system() == 'Windows'):
-    stop_words = [word for word in stop_words]
-else:
-    stop_words = [unicode(word) for word in stop_words]
+stop_words.update(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
+                   'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'cid', 'et', 'al', '.al', 'al.', 'circa', 'figure'])
+
+stop_words = [word for word in stop_words]
 
 
 
@@ -120,24 +92,35 @@ with open(tagger_path, 'rb') as handle:
 #   Chunk our paper
 chunks = [[chunker.parse(sentence) for sentence in section] for section in paper]
 #   For each section in the paper
-results = [[]]
+results = [[[]]]
 for i, section in enumerate(chunks):
     tree_csm = ChunkTreeCSM(section, embeddings, tags, embedding_size = embedding_size)
     maxCsmOutput = tree_csm.selectKeywords(tags, 'min')
-    print("maxCsmOutput")
-    pprint.pprint(maxCsmOutput)
+    #print("maxCsmOutput")
+    """if maxCsmOutput:
+        pprint.pprint(maxCsmOutput)
+        print("@@@@@@@@@@@@@@@")"""
+    #if maxCsmOutput:
+    #Remove empty lists and filter stop words
+    maxCsmOutput = [[item for item in sublist if item not in stop_words]
+        for sublist in maxCsmOutput]
+    maxCsmOutput = [sublist for sublist in maxCsmOutput if sublist]
     """maxCsmOutput = [[str(SnowballStemmer("english").stem(item)) for item in sublist if item not in stop_words]
                 for sublist in maxCsmOutput]"""
 
-    #if not empty(maxCsmOutput):
-    results += [maxCsmOutput]
-pprint.pprint(results)
+    if maxCsmOutput:
+        results += [maxCsmOutput]
 
-"""extractor = Extractor(results)
-extractor.createTopicHeap()
-extractor.printTopics()"""
-extractor = FIPExtractor(results, embeddings, embedding_size)
-extractor.buldTopicStructure()
+results = results[1:]
+#pprint.pprint(results)
+
+extractor = Extractor(results, embedding_size)
+extractor.topicMatrix(embeddings)
+#extractor.createTopicHeap()
+#extractor.printTopics()
+
+"""extractor = FIPExtractor(results, embeddings, embedding_size)
+extractor.buldTopicStructure()"""
 
 end = time.time()
 print("Finished after ", end-start, "seconds")

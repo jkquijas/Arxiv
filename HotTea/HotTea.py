@@ -6,11 +6,12 @@ from nltk.stem.snowball import SnowballStemmer
 
 
 class Extractor(object):
-    def __init__(self, data, embedding_size=50):
+    def __init__(self, data, embedding_size=50, min_occur = 5, cs_threshold = .5):
         self.HM = {}
-        self.min_occur = 3
+        self.min_occur = min_occur
         self.zero_vec = np.zeros(embedding_size)
-        self.threshold = .5
+        self.threshold = cs_threshold
+        self.data = data
 
         #Fill up our <Keyword, Section Index> hashmap
         for i, section in enumerate(data):
@@ -32,17 +33,30 @@ class Extractor(object):
 
 
     def topicMatrix(self, embeddings):
-        L = [v for K, V in self.HM.items() for v in V if len(V) >= self.min_occur]
+        L = [v for K, V in self.HM.items() for v in V[1:] if len(V) >= self.min_occur]
         M = np.array([embeddings.get(v[1],self.zero_vec) for v in L])
         """L = [K for K, V in self.HM.items()]
         M = np.array([embeddings.get(v,self.zero_vec) for v in L])
         print(M)"""
         print("Computing CS matrix...")
         R = np.dot(M, M.transpose()).tolist()
-        print(len(R))
         x = [[idx+i+1 for idx, val in enumerate(R[i][i+1:]) if abs(val) > self.threshold] for i in range(len(R)-1)]
-        print(x)
-        print(len(x))
+
+
+        n = len(x)
+        i = 0
+        results = [[]]
+        while i < n:
+            S = set(x[i])
+            i+=1
+            while i < n and (set(x[i]) < S or not x[i]):
+                i +=1
+            results += [list(S)]
+
+
+        return [[self.data[L[i][0][0]][L[i][0][1]] for i in r_i] for r_i in results if r_i]
+
+
 
     def createTopicHeap(self):
         self.heap = [(len(v)*-1, set([w for (c,w) in v])) for k, v in self.HM.items() if len(v) >= self.min_occur]

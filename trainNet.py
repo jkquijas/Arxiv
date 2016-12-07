@@ -17,8 +17,10 @@ from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 
 start = time.time()
-data_path = 'Data/Training/training_trigram_data.txt'
-labels_path = 'Data/Training/training_trigram_labels.txt'
+#data_path = 'Data/Training/training_trigram_data.txt'
+#labels_path = 'Data/Training/training_trigram_labels.txt'
+data_path = '../Data/Training/training_trigram_data.txt'
+labels_path = '../Data/Training/training_trigram_labels.txt'
 
 """X = np.loadtxt(data_path, delimiter=',')
 with open(labels_path) as f:

@@ -20,6 +20,7 @@ from HotTea.HotTea import FIPExtractor
 
 import pprint
 import platform
+import itertools
 
 #Filter a noun phrase by tags
 #Returns a list of tokens in noun_phrase whose part of speech is found in tag list 'tags'
@@ -115,7 +116,14 @@ results = results[1:]
 #pprint.pprint(results)
 
 extractor = Extractor(results, embedding_size)
-extractor.topicMatrix(embeddings)
+topics = extractor.topicMatrix(embeddings)
+for i, t in enumerate(topics):
+    print("Topic ", i)
+    #This is for simple readibility, but in reality, order matters
+    #don't sort t, since it displays the NP's in order of occurrance
+    
+    t.sort()
+    pprint.pprint(list(t for t,_ in itertools.groupby(t)))
 #extractor.createTopicHeap()
 #extractor.printTopics()
 

@@ -208,7 +208,9 @@ class AbstractLIP(LIP):
 class ChunkTreeCSM(object):
     def __init__(self, tree, embeddings, tags, embedding_size=50):
         self.nps = []
+        self.embeddings = embeddings
         self.zero_vec = np.zeros(embedding_size)
+        self.embedding_size = embedding_size
         #For each sentence
         for t in tree:
             sentence_nps = []
@@ -230,7 +232,7 @@ class ChunkTreeCSM(object):
         self.abstract = [[n_p for n_p in sentence if n_p]for sentence in self.abstract]
         self.abstract = [sentence for sentence in self.abstract if sentence]
 
-    def selectKeywords(self, tags, type):
+    def selectKeywords(self, tags, type, feature_extraction = False):
         results = []
         #For each sentence
         for i, sentence in enumerate(self.abstract):
@@ -249,10 +251,20 @@ class ChunkTreeCSM(object):
                 cos_sim_np_idx = np.argmin(avg_cos_sim_list)
             selected_np = self.nps[i][cos_sim_np_idx]
             #Filter selected noun phrase to output only specified PoS
-            r = [leave[0] for leave in selected_np.leaves() if leave[1] in tags]
+            if feature_extraction:
+                r = [self.getEmbedding(leave[0]) for leave in selected_np.leaves() if leave[1] in tags]
+            else:
+                r = [leave[0] for leave in selected_np.leaves() if leave[1] in tags]
             if r:
                 results += [r]
         return results
+
+    def getEmbedding(self, word):
+        if word in self.embeddings:
+            return self.embeddings.get(word)
+        new_emb = np.random.rand(self.embedding_size)
+        self.embeddings[word] = new_emb
+        return new_emb
 
 
 

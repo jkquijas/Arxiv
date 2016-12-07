@@ -163,10 +163,10 @@ embeddings = embObj.readEmbeddings(normalize)
 values_array = embObj.valuesArray()
 keys_array = embObj.keysArray()
 
-#
-# Initialize our file reader object
-#
-#arxivReader = ArxivReader()
+rakeTime = 0.0
+ldaTime = 0.0
+nmfTime = 0.0
+csmTime = 0.0
 
 #
 # Create stopwords set
@@ -215,16 +215,16 @@ else:
 
 numPapers = len(data)
 
-"""min_num_chars = 3
+min_num_chars = 3
 max_n_gram_size = 3
 min_occur = 1
-rake_object = rake.Rake(rake_common_path, min_num_chars, max_n_gram_size, min_occur)"""
+rake_object = rake.Rake(rake_common_path, min_num_chars, max_n_gram_size, min_occur)
 
-recallFile = open('csm_recall_results.txt', 'w')
-precisionFile = open('csm_precision_results.txt', 'w')
-fmeasureFile = open('csm_fmeasure_results.txt', 'w')
+recallFile = open('latest_csm_recall_results.txt', 'w')
+precisionFile = open('latest_csm_precision_results.txt', 'w')
+fmeasureFile = open('latest_csm_fmeasure_results.txt', 'w')
 
-
+paper_count = 0
 for i in range(numPapers):
     if(i % 100 == 0):
         print(i)
@@ -239,13 +239,16 @@ for i in range(numPapers):
     if str(abstract) == '':
         continue
 
+    paper_count += 1
 
     #
     # RAKE
     #
-    """rakeOutput = rake_object.run(abstract)
+    s = time.time()
+    rakeOutput = rake_object.run(abstract)
+    rakeTime += time.time() - s
     rakeOutput = [(rakeOutput[j][0]).split() for j in range(len(nltk.tokenize.sent_tokenize(abstract)))]
-    rakeOutput = [[str(SnowballStemmer("english").stem(item)) for item in sublist] for sublist in rakeOutput]"""
+    rakeOutput = [[str(SnowballStemmer("english").stem(item)) for item in sublist] for sublist in rakeOutput]
 
 
     if platform.system() == 'Windows':
@@ -273,7 +276,7 @@ for i in range(numPapers):
     #
     # lda
     #
-    """n = len(keywords)
+    n = len(keywords)
     n_features = 1000
     n_topics = len(abstract)
     n_top_words = 3
@@ -290,18 +293,25 @@ for i in range(numPapers):
                                 learning_method='online',
                                 learning_offset=50.,
                                 random_state=0)
-    lda.fit(tf)
-    nmf.fit(tfidf)
+
 
     tf_feature_names = tf_vectorizer.get_feature_names()
 
+    s = time.time()
+    lda.fit(tf)
     ldaOutput = get_topics(lda, tf_feature_names, n_top_words)
+    ldaTime += time.time() - s
+
     ldaOutput = [(ldaOutput[j]).split() for j in range(len(ldaOutput))]
     ldaOutput = [[str(SnowballStemmer("english").stem(item)) for item in sublist] for sublist in ldaOutput]
 
+    s = time.time()
+    nmf.fit(tfidf)
     nmfOutput = get_topics(nmf, tf_feature_names, n_top_words)
+    nmfTime += time.time() - s
+
     nmfOutput = [(nmfOutput[j]).split() for j in range(len(nmfOutput))]
-    nmfOutput = [[str(SnowballStemmer("english").stem(item)) for item in sublist] for sublist in nmfOutput]"""
+    nmfOutput = [[str(SnowballStemmer("english").stem(item)) for item in sublist] for sublist in nmfOutput]
 
 
 
@@ -316,9 +326,11 @@ for i in range(numPapers):
         chunker = pickle.load(handle)
     chunks = [chunker.parse(sentence) for sentence in abstract]
 
+    s = time.time()
     tree_csm = ChunkTreeCSM(chunks, embeddings, tags)
-
     minCsmOutput = tree_csm.selectKeywords(tags, 'min')
+    csmTime += time.time() - s
+
     minCsmOutput = [[str(SnowballStemmer("english").stem(item)) for item in sublist if item not in stop_words]
                     for sublist in minCsmOutput]
     """maxCsmOutput = tree_csm.selectKeywords(tag_filter, 'max')
@@ -358,15 +370,17 @@ for i in range(numPapers):
     output = [[str(SnowballStemmer("english").stem(item)) for item in sublist if item not in stop_words] for sublist in output]
 
 
-    [precision, recall, fmeasure] = computePerformance(output, true_keywords_map, true_keywords_lengths)
+    [precision, recall, fmeasure] = computePerformance(output, true_keywords_map, true_keywords_lengths)"""
+
     [rakePrecision, rakeRecall, rakeFmeasure] = computePerformance(rakeOutput, true_keywords_map, true_keywords_lengths)
     [ldaPrecision, ldaRecall, ldaFmeasure] = computePerformance(ldaOutput, true_keywords_map, true_keywords_lengths)
-    [nmfPrecision, nmfRecall, nmfFmeasure] = computePerformance(nmfOutput, true_keywords_map, true_keywords_lengths)"""
+    [nmfPrecision, nmfRecall, nmfFmeasure] = computePerformance(nmfOutput, true_keywords_map, true_keywords_lengths)
     [minCsmPrecision, minCsmRecall, minCsmFmeasure] = computePerformance(minCsmOutput, true_keywords_map, true_keywords_lengths)
+
     #[maxCsmPrecision, maxCsmRecall, maxCsmFmeasure] = computePerformance(maxCsmOutput, true_keywords_map, true_keywords_lengths)
-    recallFile.write(str(minCsmRecall)+"\n")
-    precisionFile.write(str(minCsmPrecision)+"\n")
-    fmeasureFile.write(str(minCsmFmeasure)+"\n")
+    #recallFile.write(str(minCsmRecall)+"\n")
+    #precisionFile.write(str(minCsmPrecision)+"\n")
+    #fmeasureFile.write(str(minCsmFmeasure)+"\n")
 
     """print(file_name)
     print('keywords:')
@@ -392,6 +406,10 @@ for i in range(numPapers):
     print("Max-CSM: recall = ", maxCsmRecall, ", precision = ", maxCsmPrecision, ", f-measure = ", maxCsmFmeasure)
     print('\n')"""
 
+    recallFile.write(str(rakeRecall)+","+str(ldaRecall)+","+str(nmfRecall)+","+str(minCsmRecall)+"\n")
+    precisionFile.write(str(rakePrecision)+","+str(ldaPrecision)+","+str(nmfPrecision)+","+str(minCsmPrecision)+"\n")
+    fmeasureFile.write(str(rakeFmeasure)+","+str(ldaFmeasure)+","+str(nmfFmeasure)+","+str(minCsmFmeasure)+"\n")
+
     #recallFile.write(str(recall)+","+str(rakeRecall)+","+str(ldaRecall)+","+str(nmfRecall)+","+str(minCsmRecall)+","+str(maxCsmRecall)+"\n")
     #precisionFile.write(str(precision)+","+str(rakePrecision)+","+str(ldaPrecision)+","+str(nmfPrecision)+","+str(minCsmPrecision)+","+str(maxCsmPrecision)+"\n")
     #fmeasureFile.write(str(fmeasure)+","+str(rakeFmeasure)+","+str(ldaFmeasure)+","+str(nmfFmeasure)+","+str(minCsmFmeasure)+","+str(maxCsmFmeasure)+"\n")
@@ -402,4 +420,15 @@ precisionFile.close()
 fmeasureFile.close()
 
 end = time.time()
+
+rakeTime /= paper_count
+ldaTime /= paper_count
+nmfTime /= paper_count
+csmTime /= paper_count
+
+print('rakeTime = ', rakeTime)
+print('ldaTime = ', ldaTime)
+print('nmfTime = ', nmfTime)
+print('csmTime = ', csmTime)
+
 print("Finished after ", end-start, "seconds")

@@ -1,6 +1,9 @@
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.svm import LinearSVC
+from sklearn.naive_bayes import BernoulliNB
+from sklearn.neural_network import MLPClassifier
+
 import os
 import platform
 import pickle
@@ -47,8 +50,12 @@ abstractKey = 'Abstract : '
 latestAmendmentKey = 'Latest Amendment Date'
 
 #'DMS ': 9910, 'DUE ': 8808, 'EAR ': 7255, 'DMI ': 6525, 'OCE ': 5998, 'INT ': 5946, 'SES ': 5943, 'CHE ': 5702, 'IBN ': 5437, 'DMR ': 5379, 'DEB ': 4972, 'BCS ': 4702, 'MCB ': 4611, 'ESI ': 4434, 'ATM ': 4237, 'CCR ': 4163, 'CMS ': 4038, 'DBI ': 3521, 'CTS ': 3137, 'PHY ': 3120, 'ECS ': 2998, 'OPP ': 2862, 'IIS ': 2329, 'BES ': 1973, 'DGE ': 1917, 'AST ': 1869, 'EIA ': 1752, 'ANI ': 1619, 'HRD ': 1494, 'EEC ': 1446, 'REC ': 905, 'ACI ': 717, 'OIA ': 530, 'OIG ': 428, 'ESR ': 343, 'DIS ': 252, 'SRS ': 231, 'EPS ': 162, 'EHR ': 102, 'GEO ': 101, 'BIO ': 62, 'ENG ': 43, 'EID ': 36, 'RED ': 30, 'HRM ': 29, 'MIP ': 28, 'SBE ': 27, 'LPA ': 22, 'DOB ': 21, 'EF ': 17, 'DAS ': 17, 'MPS ': 16, 'SBR ': 9, 'DFM ': 8, 'NCO ': 8, 'MDR ': 8, 'OEO ': 7, 'CPO ': 7, 'III ': 6, 'O/D ': 5, 'CSE ': 4, 'NONE ': 4, 'IRM ': 4, '': 3, 'NCR ': 3, 'STI ': 3, 'DCB ': 3, 'NSB ': 2, 'PRA ': 2, 'null ': 1, 'BFA ': 1
+labelsList = ['DMS ', 'DUE ', 'EAR ', 'DMI ', 'OCE ', 'INT ', 'SES ', 'CHE ', 'IBN ', 'DMR ', 'DEB ', 'BCS ', 'MCB ', 'ESI ',
+              'ATM ', 'CCR ', 'CMS ', 'DBI ', 'CTS ', 'PHY ', 'ECS ', 'OPP ', 'IIS ', 'BES ', 'DGE ', 'AST ', 'EIA ', 'ANI ', 'HRD ',
+              'EEC ', 'REC ', 'ACI ', 'OIA ', 'OIG ', 'ESR ', 'DIS ', 'SRS ', 'EPS ', 'EHR ', 'GEO ', 'BIO ', 'ENG ',
+              'EID ', 'RED ','HRM ','MIP ','SBE ','LPA ','DOB ','EF ','DAS ','MPS ']
 #labelsList = ['DMS ','DUE ','EAR ']
-labelsList = ['IBN ','DEB ','MCB ']
+#labelsList = ['IBN ','DEB ','MCB ']
 fileSet = set()
 
 for dir_, _, files in os.walk(rootDir):
@@ -94,24 +101,37 @@ tfidf_vectorizer = TfidfVectorizer(max_df=0.95, min_df=2,
                                    stop_words='english')
 
 #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+print "len(X) = ", len(X)
 indices = np.random.permutation(len(y))
 test_split = .33
 train_indices = indices[0:int(len(indices)*(1-test_split))]
 test_indices = indices[int(len(indices)*(1-test_split)):]
 X_train = [X[i] for i in train_indices]
+
+
 y_train = [y[i] for i in train_indices]
 X_test = [X[i] for i in test_indices]
 y_test = [y[i] for i in test_indices]
+print "len(X_train) = ", len(X_train)
+print "len(X_test) = ", len(X_test)
 
 X_train = tfidf_vectorizer.fit_transform(X_train)
+print "X_train.shape tfidf = ", X_train.shape
+print tfidf_vectorizer.get_feature_names()
+
 print 'Finished building dictionary after', time.time() - start, ' seconds'
-print 'Training LinearSVC'
+print 'Training classifier'
 start = time.time()
-clf = LinearSVC()
+
+#clf = LinearSVC()
+clf = MLPClassifier(hidden_layer_sizes=(100,50), verbose=True, activation="relu", tol=.0001)
+#clf = BernoulliNB()
+
 clf.fit(X_train,y_train)
 print 'Finished training after ', time.time() - start, ' seconds'
 
 X_test = tfidf_vectorizer.transform(X_test)
+print "X_test.shape tfidf = ", X_test.shape
 #print 'Score = ', clf.score(X_test, y_test)
 accuracy = 0.0
 y_pred = []

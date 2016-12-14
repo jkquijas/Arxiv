@@ -1,0 +1,21 @@
+MLP RELU 400,300,200,100,50
+Testing accuracy =  0.791447101743
+Finished after  62.9229998589  seconds
+fmeasure =  0.788847622634
+
+MLP RELU 500,400,300,200,100,50
+Testing accuracy =  0.803202269964
+Finished after  104.646000147  seconds
+fmeasure =  0.802277231553
+
+
+
+350,350,350,350,350
+Testing accuracy =  0.784758816376
+Finished after  85.8120000362  seconds
+fmeasure =  0.784016750473
+
+ZEROVEC emb size = 100,     150,150,150,150,150
+Testing accuracy =  0.785366842319
+Finished after  90.0690000057  seconds
+fmeasure =  0.78601179082

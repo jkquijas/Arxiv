@@ -1,0 +1,2 @@
+Testing accuracy = 0.792642140468
+fmeasure = 0.793174986896

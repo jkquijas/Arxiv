@@ -206,7 +206,8 @@ class AbstractLIP(LIP):
             self.keywordMap[np.array_str(s[self.chosen_idxs[i]][1])] = True
 
 class ChunkTreeCSM(object):
-    def __init__(self, tree, embeddings, tags, embedding_size=50):
+    def __init__(self, tree, embeddings, tags, embedding_size=50, use_zero_vec=True):
+        self.use_zero_vec = use_zero_vec
         self.nps = []
         self.embeddings = embeddings
         self.zero_vec = np.zeros(embedding_size)
@@ -262,8 +263,14 @@ class ChunkTreeCSM(object):
     def getEmbedding(self, word):
         if word in self.embeddings:
             return self.embeddings.get(word)
-        new_emb = np.random.rand(self.embedding_size)
-        self.embeddings[word] = new_emb
+
+        if self.use_zero_vec:
+            new_emb = self.zero_vec
+            self.embeddings[word] = new_emb
+        else:
+            new_emb = np.random.rand(self.embedding_size)
+            self.embeddings[word] = new_emb
+
         return new_emb
 
 

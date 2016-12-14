@@ -1,4 +1,5 @@
 import os
+import sys
 import platform
 import pickle
 from collections import Counter
@@ -17,7 +18,7 @@ import numpy as np
 #
 # Get embeddings
 #
-embedding_size = 50
+embedding_size = 100
 embObj = EmbeddingsReader(embedding_size = embedding_size)
 normalize = True
 embeddings = embObj.readEmbeddings(normalize)
@@ -42,8 +43,10 @@ if(platform.system() == 'Windows'):
     common_words_path = 'C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\20k.txt'
     rake_common_path = "C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\500common.txt"
     papers_path = "C:\\Users\\Jona Q\\Documents\GitHub\\Arxiv\\Data\\ACMSerializedCoPPubs\\serializedPubsCS.txt"
-    tagger_path = 'C:\\Users\\Jona Q\\Documents\\GitHub\\Arxiv\\chunker.pickle'
+    tagger_path = 'C:\\Users\\Jona Q\\Documents\\GitHub\\Arxiv\\chunker2.pickle'
     rootDir = 'Data\\Abstracts\\'
+    training_data_path = "..\\Data\\Training\\training_trigram_50_data.txt"
+    training_labels_path = "..\\Data\\Training\\training_trigram_50_labels.txt"
 else:
     common_words_path = '/home/jonathan/Documents/WordEmbedding/Arxiv/Data/20k.txt'
     papers_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/Data/ACMSerializedCoPPubs/serializedPubsCS.txt"
@@ -51,8 +54,8 @@ else:
     tagger_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/chunker2.pickle"
     rootDir = 'Data/Abstracts/'
     tagger_path = "/home/jonathan/Documents/WordEmbedding/Arxiv/chunker2.pickle"
-    training_data_path = "Data/Training/training_trigram_data.txt"
-    training_labels_path = "Data/Training/training_trigram_labels.txt"
+    training_data_path = "../Data/Training/training_all_data.txt"
+    training_labels_path = "../Data/Training/training_all_labels.txt"
 
 #   Load trained chunker
 with open(tagger_path, 'rb') as handle:
@@ -68,6 +71,10 @@ latestAmendmentKey = 'Latest Amendment Date'
 #'DMS ': 9910, 'DUE ': 8808, 'EAR ': 7255, 'DMI ': 6525, 'OCE ': 5998, 'INT ': 5946, 'SES ': 5943, 'CHE ': 5702, 'IBN ': 5437, 'DMR ': 5379, 'DEB ': 4972, 'BCS ': 4702, 'MCB ': 4611, 'ESI ': 4434, 'ATM ': 4237, 'CCR ': 4163, 'CMS ': 4038, 'DBI ': 3521, 'CTS ': 3137, 'PHY ': 3120, 'ECS ': 2998, 'OPP ': 2862, 'IIS ': 2329, 'BES ': 1973, 'DGE ': 1917, 'AST ': 1869, 'EIA ': 1752, 'ANI ': 1619, 'HRD ': 1494, 'EEC ': 1446, 'REC ': 905, 'ACI ': 717, 'OIA ': 530, 'OIG ': 428, 'ESR ': 343, 'DIS ': 252, 'SRS ': 231, 'EPS ': 162, 'EHR ': 102, 'GEO ': 101, 'BIO ': 62, 'ENG ': 43, 'EID ': 36, 'RED ': 30, 'HRM ': 29, 'MIP ': 28, 'SBE ': 27, 'LPA ': 22, 'DOB ': 21, 'EF ': 17, 'DAS ': 17, 'MPS ': 16, 'SBR ': 9, 'DFM ': 8, 'NCO ': 8, 'MDR ': 8, 'OEO ': 7, 'CPO ': 7, 'III ': 6, 'O/D ': 5, 'CSE ': 4, 'NONE ': 4, 'IRM ': 4, '': 3, 'NCR ': 3, 'STI ': 3, 'DCB ': 3, 'NSB ': 2, 'PRA ': 2, 'null ': 1, 'BFA ': 1
 #labelsList = ['DMS ','DUE ','EAR ']
 labelsList = ['IBN ','DEB ','MCB ']
+"""labelsList = ['DMS ', 'DUE ', 'EAR ', 'DMI ', 'OCE ', 'INT ', 'SES ', 'CHE ', 'IBN ', 'DMR ', 'DEB ', 'BCS ', 'MCB ', 'ESI ',
+              'ATM ', 'CCR ', 'CMS ', 'DBI ', 'CTS ', 'PHY ', 'ECS ', 'OPP ', 'IIS ', 'BES ', 'DGE ', 'AST ', 'EIA ', 'ANI ', 'HRD ',
+              'EEC ', 'REC ', 'ACI ', 'OIA ', 'OIG ', 'ESR ', 'DIS ', 'SRS ', 'EPS ', 'EHR ', 'GEO ', 'BIO ', 'ENG ',
+              'EID ', 'RED ','HRM ','MIP ','SBE ','LPA ','DOB ','EF ','DAS ','MPS ']"""
 fileSet = set()
 
 for dir_, _, files in os.walk(rootDir):
@@ -81,12 +88,18 @@ fileList = [rootDir + filename for filename in fileSet]
 
 
 cnt = Counter()
-labels_file = open(training_labels_path,'w')
-
-training_data_file = open(training_data_path,'w')
-training_data_file.write("")
-training_data_file.close()
-training_data_file = open(training_data_path,'w+')
+if platform.system() == 'Windows':
+    labels_file = open(training_labels_path,'w')
+    training_data_file = open(training_data_path,'w')
+    training_data_file.write("")
+    training_data_file.close()
+    training_data_file = open(training_data_path,'w+')
+else:
+   labels_file = open(training_labels_path,'w')
+   training_data_file = open(training_data_path,'w')
+   training_data_file.write("")
+   training_data_file.close()
+   training_data_file = open(training_data_path,'w+')
 
 #Create chunks using our grammar
 with open(tagger_path, 'rb') as handle:
@@ -94,13 +107,14 @@ with open(tagger_path, 'rb') as handle:
 
 for i, f in enumerate(fileList):
     if i % 5000 == 0:
-        print i
+        print(i)
     if f[len(f)-3:] != 'txt':
         continue
-    file = open(f, 'r')
-    text = file.read()
-    text = ' '.join(text.split())
+
     try:
+        file = open(f, 'r')
+        text = file.read()
+        text = ' '.join(text.split())
         title = text[text.index(titleKey)+len(titleKey):text.index(typeKey)]
         label = text[text.index(classKey) + len(classKey):text.index(latestAmendmentKey)]
 
@@ -119,12 +133,13 @@ for i, f in enumerate(fileList):
 
         chunks = [chunker.parse(sentence) for sentence in abstract]
 
-        tree_csm = ChunkTreeCSM(chunks, embeddings, tags)
+        tree_csm = ChunkTreeCSM(chunks, embeddings, tags, embedding_size=embedding_size, use_zero_vec=False)
 
         minCsmOutput = tree_csm.selectKeywords(tags, 'min', True)
         for r in minCsmOutput:
             if len(r) == 1:
-                np.savetxt(training_data_file, np.hstack((r[0],r[0],r[0],i))[np.newaxis], delimiter=',')
+                datum = np.hstack((r[0],r[0],r[0],i))[np.newaxis]
+                np.savetxt(training_data_file, datum, delimiter=',')
                 labels_file.write(label+str(i)+'\n')
             elif len(r) == 2:
                 np.savetxt(training_data_file, np.hstack((r[0],r[0],r[1],i))[np.newaxis], delimiter=',')
@@ -132,16 +147,19 @@ for i, f in enumerate(fileList):
                 labels_file.write(label+str(i)+'\n')
                 labels_file.write(label+str(i)+'\n')
             else:
-                np.savetxt(training_data_file, np.hstack((r[0],r[0],r[1],i))[np.newaxis], delimiter=',')
-                labels_file.write(label+str(i)+'\n')
+                #np.savetxt(training_data_file, np.hstack((r[0],r[0],r[1],i))[np.newaxis], delimiter=',')
+                #labels_file.write(label+str(i)+'\n')
                 for k in range(len(r)-2):
                     np.savetxt(training_data_file, np.hstack((r[k],r[k+1],r[k+2],i))[np.newaxis], delimiter=',')
                     labels_file.write(label+str(i)+'\n')
-                np.savetxt(training_data_file, np.hstack((r[len(r)-2],r[len(r)-1],r[len(r)-1],i))[np.newaxis], delimiter=',')
-                labels_file.write(label+str(i)+'\n')
+                #np.savetxt(training_data_file, np.hstack((r[len(r)-2],r[len(r)-1],r[len(r)-1],i))[np.newaxis], delimiter=',')
+                #labels_file.write(label+str(i)+'\n')
         #print "saved abstract ", i
-    except:
-        print 'Error in ', i
+    except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(exc_type, exc_obj, exc_tb)
+        print(sys.exc_info()[0].__name__, os.path.basename(sys.exc_info()[2].tb_frame.f_code.co_filename), sys.exc_info()[2].tb_lineno)
         continue
 
     cnt[label] += 1
@@ -150,5 +168,5 @@ for i, f in enumerate(fileList):
 labels_file.close()
 training_data_file.close()
 
-print len(cnt)
-print cnt
+#print len(cnt)
+#print cnt
